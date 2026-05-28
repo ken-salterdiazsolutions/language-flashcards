@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Volume2, Sparkles } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech } from './firebase';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
+import { CategoryStrip } from './CategoryStrip';
 
 type LangTheme = {
   label: string;
@@ -145,26 +146,12 @@ const MultilingualFlashcards = () => {
           })}
         </div>
 
-        {/* Category pills */}
-        <div className="flex flex-wrap gap-2 mb-6 sm:mb-8 justify-center">
-          {categories.map((cat) => {
-            const active = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => { setSelectedCategory(cat); setCurrentCard(0); resetCardState(); }}
-                className={`rounded-full px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
-                  active
-                    ? 'bg-slate-800 text-white shadow-md'
-                    : 'bg-white/70 text-slate-600 hover:bg-white'
-                }`}
-              >
-                <span className="mr-1">{CATEGORY_EMOJI[cat]}</span>
-                {cat === 'all' ? 'All' : cat}
-              </button>
-            );
-          })}
-        </div>
+        {/* Category strip — horizontal scroll with auto-centered active pill */}
+        <CategoryStrip
+          categories={categories}
+          selected={selectedCategory}
+          onSelect={(cat) => { setSelectedCategory(cat); setCurrentCard(0); resetCardState(); }}
+        />
 
         {/* The card — full 3D flip */}
         <div className="relative mb-6" style={{ perspective: '1600px' }}>
