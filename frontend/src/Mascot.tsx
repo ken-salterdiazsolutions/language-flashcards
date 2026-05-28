@@ -140,10 +140,16 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
         wrapper.style.left = `${xRef.current}px`;
       }
 
-      if (now - startedAt >= WALK_DURATION_MS) {
-        // Time's up — settle into idle at the current position.
-        setMood('idle');
-        return;
+      // Once the walk duration has elapsed, only settle if the mascot is fully
+      // inside the container (no edge clipping). Otherwise keep walking.
+      if (now - startedAt >= WALK_DURATION_MS && container && wrapper) {
+        const containerW = container.clientWidth;
+        const mascotW = wrapper.offsetWidth;
+        const fullyVisible = xRef.current >= 0 && xRef.current + mascotW <= containerW;
+        if (fullyVisible) {
+          setMood('idle');
+          return;
+        }
       }
       rafRef.current = requestAnimationFrame(step);
     };
