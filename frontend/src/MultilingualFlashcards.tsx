@@ -163,8 +163,6 @@ const MultilingualFlashcards = () => {
 
         {/* The card — full 3D flip */}
         <div className="relative mb-6" style={{ perspective: '1600px' }}>
-          {/* Faint stacked card behind for depth */}
-          <div className="absolute inset-0 bg-white/50 rounded-3xl translate-y-2 scale-[0.97] -z-10" />
           <button
             onClick={flipCard}
             className="group relative w-full text-left"
@@ -180,7 +178,7 @@ const MultilingualFlashcards = () => {
             >
               {/* Front face */}
               <div
-                className="absolute inset-0 bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col items-center justify-center px-8 py-8 sm:py-12"
+                className="absolute inset-0 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col items-center justify-center px-8 py-8 sm:py-12"
                 style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
               >
                 <div className={`absolute top-0 left-0 bottom-0 w-3 ${theme.stripe}`} />
@@ -198,7 +196,7 @@ const MultilingualFlashcards = () => {
 
               {/* Back face — pre-rotated 180° so it reads correctly when the container flips */}
               <div
-                className="absolute inset-0 bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col items-center justify-center px-8 py-8 sm:py-12"
+                className="absolute inset-0 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col items-center justify-center px-8 py-8 sm:py-12"
                 style={{
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
