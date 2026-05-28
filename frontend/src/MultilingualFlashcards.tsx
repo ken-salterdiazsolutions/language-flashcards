@@ -59,6 +59,7 @@ const MultilingualFlashcards = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showKanji, setShowKanji] = useState(false);
   const [revealCount, setRevealCount] = useState(0);
+  const [navCount, setNavCount] = useState(0);
   const { streak, recordVisit } = useStreak();
 
   const filtered = selectedCategory === 'all' ? flashcards : flashcards.filter(c => c.cat === selectedCategory);
@@ -77,10 +78,12 @@ const MultilingualFlashcards = () => {
 
   const nextCard = () => {
     setCurrentCard((prev) => (prev + 1) % filtered.length);
+    setNavCount(c => c + 1);
     resetCardState();
   };
   const prevCard = () => {
     setCurrentCard((prev) => (prev - 1 + filtered.length) % filtered.length);
+    setNavCount(c => c + 1);
     resetCardState();
   };
   const flipCard = () => {
@@ -247,7 +250,13 @@ const MultilingualFlashcards = () => {
 
           {/* Mascot — sits on the card's bottom-right corner, doesn't rotate with the flip */}
           <div className="absolute -bottom-8 -right-3 sm:-bottom-12 sm:-right-6 w-32 h-32 sm:w-40 sm:h-40 z-10">
-            <Mascot flipCount={revealCount} isPlaying={isPlaying} streak={streak} />
+            <Mascot
+              flipCount={revealCount}
+              navCount={navCount}
+              categoryKey={selectedCategory}
+              isPlaying={isPlaying}
+              streak={streak}
+            />
           </div>
         </div>
 
