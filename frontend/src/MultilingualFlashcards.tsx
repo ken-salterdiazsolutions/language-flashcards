@@ -205,7 +205,7 @@ const MultilingualFlashcards = () => {
                   transform: 'rotateY(180deg)',
                 }}
               >
-                <div className={`absolute top-0 left-0 bottom-0 w-3 ${theme.stripe}`} />
+                <div className={`absolute top-0 right-0 bottom-0 w-3 ${theme.stripe}`} />
                 <div className="text-center space-y-2 sm:space-y-3">
                   <div className="flex items-center justify-center gap-2">
                     <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${theme.chip} ${theme.chipText}`}>
