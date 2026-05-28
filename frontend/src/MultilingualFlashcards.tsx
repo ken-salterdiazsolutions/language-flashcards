@@ -244,6 +244,11 @@ const MultilingualFlashcards = () => {
               </div>
             </div>
           </button>
+
+          {/* Mascot — sits on the card's bottom-right corner, doesn't rotate with the flip */}
+          <div className="absolute -bottom-6 -right-2 sm:-bottom-8 sm:-right-4 w-20 h-20 sm:w-28 sm:h-28 z-10">
+            <Mascot flipCount={revealCount} isPlaying={isPlaying} streak={streak} />
+          </div>
         </div>
 
         {/* Action buttons (only when flipped) */}
@@ -319,8 +324,6 @@ const MultilingualFlashcards = () => {
         </div>
 
       </div>
-
-      <Mascot flipCount={revealCount} isPlaying={isPlaying} streak={streak} />
     </div>
   );
 };

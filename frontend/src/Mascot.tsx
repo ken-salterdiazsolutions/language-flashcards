@@ -64,9 +64,7 @@ export function Mascot({ flipCount, isPlaying, streak }: Props) {
 
   return (
     <div
-      className={`fixed bottom-2 right-2 sm:bottom-4 sm:right-4 z-30 w-24 h-24 sm:w-32 sm:h-32 pointer-events-none select-none ${
-        isPlaying ? 'animate-bounce' : ''
-      }`}
+      className={`w-full h-full pointer-events-none select-none ${isPlaying ? 'animate-bounce' : ''}`}
       aria-hidden="true"
     >
       <DotLottieReact
