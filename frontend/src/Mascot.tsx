@@ -167,7 +167,7 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
     // containerRef gives us the parent width for the walk wrap logic.
     // The wrapper is absolutely positioned at the bottom of the card,
     // and we drive `left` imperatively via the rAF loop above.
-    <div ref={containerRef} className="absolute inset-x-0 -bottom-8 sm:-bottom-12 h-32 sm:h-40 pointer-events-none z-10">
+    <div ref={containerRef} className="absolute inset-x-0 -bottom-8 sm:-bottom-12 h-32 sm:h-40 pointer-events-none z-10 overflow-x-clip">
       <div
         ref={wrapperRef}
         className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 ${isPlaying ? 'animate-mascot-talk' : ''}`}
