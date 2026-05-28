@@ -116,7 +116,7 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
 
   return (
     <div
-      className={`w-full h-full pointer-events-none select-none ${isPlaying ? 'animate-bounce' : ''}`}
+      className={`w-full h-full pointer-events-none select-none ${isPlaying ? 'animate-mascot-talk' : ''}`}
       aria-hidden="true"
     >
       <DotLottieReact
