@@ -68,6 +68,9 @@ node_modules/
 # dataconnect generated files
 .dataconnect
 
+# Playwright MCP browser-driving artifacts
+.playwright-mcp/
+
 # Logs
 logs
 *.log
