@@ -39,7 +39,7 @@ type Props = {
 
 const MILESTONES = new Set([3, 7, 14, 30]);
 const IDLE_WALK_INTERVAL_MS = 20_000;
-const WALK_SPEED_PX_PER_SEC = 110; // ~6 seconds to cross a 660px card
+const WALK_SPEED_PX_PER_SEC = 55; // relaxed stroll; ~12 seconds to cross a 660px card
 const WALK_DURATION_MS = 4_500;     // each walk burst lasts this long, then settles to idle
 
 export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: Props) {
