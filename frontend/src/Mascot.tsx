@@ -31,7 +31,7 @@ type Props = {
   navCount: number;
   /** Changes when category selection changes — triggers walk */
   categoryKey: string;
-  /** True while TTS is playing — adds a bounce on top of current animation */
+  /** True while TTS is playing — adds a subtle head-bob */
   isPlaying: boolean;
   /** Current streak value — milestones (3/7/14/30) trigger celebrate */
   streak: number;
@@ -39,23 +39,32 @@ type Props = {
 
 const MILESTONES = new Set([3, 7, 14, 30]);
 const IDLE_WALK_INTERVAL_MS = 20_000;
+const WALK_SPEED_PX_PER_SEC = 110; // ~6 seconds to cross a 660px card
+const WALK_DURATION_MS = 4_500;     // each walk burst lasts this long, then settles to idle
 
 export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: Props) {
   const dotLottieRef = useRef<DotLottie | null>(null);
-  const [mood, setMood] = useState<Mood>('idle');
-  const moodRef = useRef<Mood>('idle');
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Start walking immediately on mount so the mascot walks in from the left.
+  const [mood, setMood] = useState<Mood>('walk');
+  const moodRef = useRef<Mood>('walk');
   moodRef.current = mood;
+
+  // Horizontal position, in pixels from the left edge of the parent.
+  // Starts off-screen to the left so the entry walk reads as "walking in."
+  const xRef = useRef<number>(-200);
+  const lastTickRef = useRef<number | null>(null);
+  const rafRef = useRef<number | null>(null);
 
   const prevStreakRef = useRef(streak);
   const prevFlipRef = useRef(flipCount);
   const prevNavRef = useRef(navCount);
   const prevCategoryRef = useRef(categoryKey);
 
-  // Switch to a new mood only if it has higher priority than the current one.
   const requestMood = (next: Mood) => {
-    if (PRIORITY[next] > PRIORITY[moodRef.current]) {
-      setMood(next);
-    }
+    if (PRIORITY[next] > PRIORITY[moodRef.current]) setMood(next);
   };
 
   // Wave on flip
@@ -70,9 +79,7 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   useEffect(() => {
     const prev = prevStreakRef.current;
     prevStreakRef.current = streak;
-    if (streak > prev && MILESTONES.has(streak)) {
-      requestMood('celebrate');
-    }
+    if (streak > prev && MILESTONES.has(streak)) requestMood('celebrate');
   }, [streak]);
 
   // Walk on prev/next navigation
@@ -90,44 +97,93 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
     requestMood('walk');
   }, [categoryKey]);
 
-  // Periodic idle walks every IDLE_WALK_INTERVAL_MS, but only if currently idle
+  // Periodic idle walks
   useEffect(() => {
     const id = setInterval(() => {
-      if (moodRef.current === 'idle') {
-        setMood('walk');
-      }
+      if (moodRef.current === 'idle') setMood('walk');
     }, IDLE_WALK_INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
 
-  // Configure the player when mood changes
+  // Configure the Lottie player when mood changes
   useEffect(() => {
     const lottie = dotLottieRef.current;
     if (!lottie) return;
-    lottie.setLoop(mood === 'idle');
+    lottie.setLoop(mood === 'walk' || mood === 'idle');
     lottie.setFrame(0);
     lottie.play();
   }, [mood]);
 
+  // Drive horizontal position with rAF while walking; stop after WALK_DURATION_MS.
+  useEffect(() => {
+    if (mood !== 'walk') {
+      lastTickRef.current = null;
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      return;
+    }
+
+    const startedAt = performance.now();
+
+    const step = (now: number) => {
+      if (lastTickRef.current === null) lastTickRef.current = now;
+      const dt = (now - lastTickRef.current) / 1000;
+      lastTickRef.current = now;
+
+      const container = containerRef.current;
+      const wrapper = wrapperRef.current;
+      if (container && wrapper) {
+        const containerW = container.clientWidth;
+        const mascotW = wrapper.offsetWidth;
+        xRef.current += WALK_SPEED_PX_PER_SEC * dt;
+        if (xRef.current > containerW) xRef.current = -mascotW;
+        wrapper.style.left = `${xRef.current}px`;
+      }
+
+      if (now - startedAt >= WALK_DURATION_MS) {
+        // Time's up — settle into idle at the current position.
+        setMood('idle');
+        return;
+      }
+      rafRef.current = requestAnimationFrame(step);
+    };
+    rafRef.current = requestAnimationFrame(step);
+
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      lastTickRef.current = null;
+    };
+  }, [mood]);
+
+  // Wave and celebrate are one-shot Lotties; when they finish, return to idle.
+  // Walk doesn't use this — its lifecycle is driven by the rAF duration cap.
   const handleComplete = () => {
-    // Non-idle moods play once then return to idle
-    if (moodRef.current !== 'idle') setMood('idle');
+    const current = moodRef.current;
+    if (current === 'wave' || current === 'celebrate') setMood('idle');
   };
 
   return (
-    <div
-      className={`w-full h-full pointer-events-none select-none ${isPlaying ? 'animate-mascot-talk' : ''}`}
-      aria-hidden="true"
-    >
-      <DotLottieReact
-        src={SOURCES[mood]}
-        loop={mood === 'idle'}
-        autoplay
-        dotLottieRefCallback={(instance) => {
-          dotLottieRef.current = instance;
-          instance?.addEventListener('complete', handleComplete);
-        }}
-      />
+    // containerRef gives us the parent width for the walk wrap logic.
+    // The wrapper is absolutely positioned at the bottom of the card,
+    // and we drive `left` imperatively via the rAF loop above.
+    <div ref={containerRef} className="absolute inset-x-0 -bottom-8 sm:-bottom-12 h-32 sm:h-40 pointer-events-none z-10">
+      <div
+        ref={wrapperRef}
+        className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 ${isPlaying ? 'animate-mascot-talk' : ''}`}
+        style={{ left: `${xRef.current}px` }}
+        aria-hidden="true"
+      >
+        <DotLottieReact
+          src={SOURCES[mood]}
+          loop={mood === 'walk' || mood === 'idle'}
+          autoplay
+          dotLottieRefCallback={(instance) => {
+            dotLottieRef.current = instance;
+            instance?.addEventListener('complete', handleComplete);
+          }}
+        />
+      </div>
     </div>
   );
 }
