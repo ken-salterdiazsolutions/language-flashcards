@@ -4,6 +4,7 @@ import { ensureSignedIn, synthesizeSpeech } from './firebase';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
 import { CategoryStrip } from './CategoryStrip';
+import { Mascot } from './Mascot';
 
 type LangTheme = {
   label: string;
@@ -57,6 +58,7 @@ const MultilingualFlashcards = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isPlaying, setIsPlaying] = useState(false);
   const [showKanji, setShowKanji] = useState(false);
+  const [revealCount, setRevealCount] = useState(0);
   const { streak, recordVisit } = useStreak();
 
   const filtered = selectedCategory === 'all' ? flashcards : flashcards.filter(c => c.cat === selectedCategory);
@@ -82,7 +84,10 @@ const MultilingualFlashcards = () => {
     resetCardState();
   };
   const flipCard = () => {
-    if (!showAnswer) recordVisit();
+    if (!showAnswer) {
+      recordVisit();
+      setRevealCount(c => c + 1);
+    }
     setShowAnswer(!showAnswer);
     setShowBreakdown(false);
   };
@@ -314,6 +319,8 @@ const MultilingualFlashcards = () => {
         </div>
 
       </div>
+
+      <Mascot flipCount={revealCount} isPlaying={isPlaying} streak={streak} />
     </div>
   );
 };
