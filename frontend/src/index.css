@@ -8,3 +8,14 @@
 .animate-mascot-talk {
   animation: mascot-talk 360ms ease-in-out infinite;
 }
+
+/* Placeholder pulse for the fire emoji in the streak modal until a Lottie
+   is added. Subtle scale wobble that suggests flame movement. */
+@keyframes streak-fire-pulse {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50%      { transform: scale(1.08) rotate(2deg); }
+}
+.streak-fire-emoji {
+  display: inline-block;
+  animation: streak-fire-pulse 800ms ease-in-out infinite;
+}

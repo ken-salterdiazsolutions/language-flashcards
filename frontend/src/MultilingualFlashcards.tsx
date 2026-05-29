@@ -5,6 +5,7 @@ import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
 import { CategoryStrip } from './CategoryStrip';
 import { Mascot } from './Mascot';
+import { StreakModal } from './StreakModal';
 
 type LangTheme = {
   label: string;
@@ -98,6 +99,7 @@ const MultilingualFlashcards = () => {
   const [showKanji, setShowKanji] = useState(false);
   const [revealCount, setRevealCount] = useState(0);
   const [navCount, setNavCount] = useState(0);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
   const { streak, recordVisit } = useStreak();
 
   // Language strip scroll state — mirrors CategoryStrip's behavior so the
@@ -203,13 +205,21 @@ const MultilingualFlashcards = () => {
               Flashcards
             </h1>
           </div>
-          {streak > 0 && (
-            <div className="flex items-center gap-1.5 bg-amber-200 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm">
-              <span className="text-base sm:text-lg">🔥</span>
-              <span>{streak}</span>
-              <span className="hidden sm:inline text-amber-800/80 font-semibold">day streak</span>
-            </div>
-          )}
+          <button
+            onClick={() => setStreakModalOpen(true)}
+            className="flex items-center gap-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
+            aria-label="Show streak details"
+          >
+            <span className="text-base sm:text-lg">🔥</span>
+            {streak > 0 ? (
+              <>
+                <span>{streak}</span>
+                <span className="hidden sm:inline text-amber-800/80 font-semibold">day streak</span>
+              </>
+            ) : (
+              <span className="font-semibold">Start a streak!</span>
+            )}
+          </button>
         </header>
 
         {/* Language picker — scrollable strip */}
@@ -436,6 +446,12 @@ const MultilingualFlashcards = () => {
         </div>
 
       </div>
+
+      <StreakModal
+        streak={streak}
+        open={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+      />
     </div>
   );
 };
