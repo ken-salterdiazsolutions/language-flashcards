@@ -65,14 +65,6 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
         </button>
       )}
 
-      {/* Fade indicators (always shown on overflow) */}
-      <div
-        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10 bg-linear-to-r from-pink-100 to-transparent transition-opacity ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`}
-      />
-      <div
-        className={`pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-10 bg-linear-to-l from-violet-200 to-transparent transition-opacity ${canScrollRight ? 'opacity-100' : 'opacity-0'}`}
-      />
-
       {/* Scrollable strip */}
       <div
         ref={scrollerRef}
