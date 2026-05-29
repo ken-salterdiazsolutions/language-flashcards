@@ -34,9 +34,29 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
     };
   }, []);
 
-  // Auto-center active pill on change
+  // Auto-center the active pill only when `selected` actually changes
+  // (not on initial mount or React StrictMode's double-invoke). Use a ref
+  // to track the previously-applied value rather than firstRender flag.
+  const lastSelectedRef = useRef<string | null>(null);
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    if (lastSelectedRef.current === null) {
+      lastSelectedRef.current = selected;
+      return;
+    }
+    if (lastSelectedRef.current === selected) return;
+    lastSelectedRef.current = selected;
+
+    const pill = activeRef.current;
+    const scroller = scrollerRef.current;
+    if (!pill || !scroller) return;
+    const pRect = pill.getBoundingClientRect();
+    const sRect = scroller.getBoundingClientRect();
+    const buffer = 16;
+    const fullyVisible =
+      pRect.left >= sRect.left + buffer && pRect.right <= sRect.right - buffer;
+    if (!fullyVisible) {
+      pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
   }, [selected]);
 
   const scrollBy = (delta: number) => {
@@ -44,7 +64,7 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
   };
 
   return (
-    <div className="relative mb-6 sm:mb-8 md:px-12">
+    <div className="relative mb-6 sm:mb-8 px-4 md:px-12">
       {/* Left arrow (desktop hover only, shown when scrollable left) */}
       {canScrollLeft && (
         <button
@@ -68,8 +88,10 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
       {/* Scrollable strip */}
       <div
         ref={scrollerRef}
-        className="flex gap-2 overflow-x-auto scroll-smooth snap-x px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex gap-2 overflow-x-auto scroll-smooth py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
+        {/* Spacer so the first pill's glow has room before the scroller's left clip edge */}
+        <div className="shrink-0 w-4" aria-hidden="true" />
         {categories.map((cat) => {
           const active = selected === cat;
           return (
@@ -77,8 +99,8 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
               key={cat}
               ref={active ? activeRef : undefined}
               onClick={() => onSelect(cat)}
-              className={`shrink-0 snap-start rounded-full px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
-                active ? 'bg-slate-800 text-white shadow-md' : 'bg-white/70 text-slate-600 hover:bg-white'
+              className={`shrink-0 rounded-full px-3 py-1.5 text-xs sm:text-sm font-bold transition-all ${
+                active ? 'bg-violet-500 text-white shadow-[0_0_12px_2px_rgba(139,92,246,0.55)]' : 'bg-white/70 text-slate-600 hover:bg-white'
               }`}
             >
               <span className="mr-1">{CATEGORY_EMOJI[cat]}</span>
@@ -86,6 +108,8 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
             </button>
           );
         })}
+        {/* Trailing spacer mirrors the leading one */}
+        <div className="shrink-0 w-4" aria-hidden="true" />
       </div>
     </div>
   );
