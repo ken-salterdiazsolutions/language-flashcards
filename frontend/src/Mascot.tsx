@@ -41,6 +41,8 @@ const MILESTONES = new Set([3, 7, 14, 30]);
 const IDLE_WALK_INTERVAL_MS = 20_000;
 const WALK_SPEED_PX_PER_SEC = 55; // relaxed stroll; ~12 seconds to cross a 660px card
 const WALK_DURATION_MS = 4_500;     // each walk burst lasts this long, then settles to idle
+const OFFSTAGE_MIN_MS = 10_000;     // after wrapping off the right, wait at least this long before reappearing
+const OFFSTAGE_MAX_MS = 60_000;     // ... and at most this long
 
 export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: Props) {
   const dotLottieRef = useRef<DotLottie | null>(null);
@@ -58,12 +60,23 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   const lastTickRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
 
+  // After the mascot wraps off the right edge it disappears for a random
+  // 10–60s before reappearing on the left. While `offstage` is true the
+  // wrapper is hidden and no mood changes are accepted (so wave/celebrate
+  // requests during the pause are silently dropped per design choice).
+  const [offstage, setOffstage] = useState(false);
+  const offstageRef = useRef(false);
+  offstageRef.current = offstage;
+  const pauseTimerRef = useRef<number | null>(null);
+  const remainingWalkMsRef = useRef<number | null>(null);
+
   const prevStreakRef = useRef(streak);
   const prevFlipRef = useRef(flipCount);
   const prevNavRef = useRef(navCount);
   const prevCategoryRef = useRef(categoryKey);
 
   const requestMood = (next: Mood) => {
+    if (offstageRef.current) return;
     if (PRIORITY[next] > PRIORITY[moodRef.current]) setMood(next);
   };
 
@@ -105,6 +118,16 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
     return () => clearInterval(id);
   }, []);
 
+  // Clean up offstage pause timer on unmount
+  useEffect(() => {
+    return () => {
+      if (pauseTimerRef.current !== null) {
+        clearTimeout(pauseTimerRef.current);
+        pauseTimerRef.current = null;
+      }
+    };
+  }, []);
+
   // Configure the Lottie player when mood changes
   useEffect(() => {
     const lottie = dotLottieRef.current;
@@ -115,14 +138,20 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   }, [mood]);
 
   // Drive horizontal position with rAF while walking; stop after WALK_DURATION_MS.
+  // When the mascot wraps off the right edge, pause for a random 10–60s
+  // before resuming on the left (pause time doesn't count against the walk
+  // duration — remaining time is preserved in remainingWalkMsRef).
   useEffect(() => {
-    if (mood !== 'walk') {
+    if (mood !== 'walk' || offstage) {
       lastTickRef.current = null;
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
       return;
     }
 
+    // If resuming from offstage, pick up remaining walk time; else fresh burst.
+    const burstDuration = remainingWalkMsRef.current ?? WALK_DURATION_MS;
+    remainingWalkMsRef.current = null;
     const startedAt = performance.now();
 
     const step = (now: number) => {
@@ -136,13 +165,26 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
         const containerW = container.clientWidth;
         const mascotW = wrapper.offsetWidth;
         xRef.current += WALK_SPEED_PX_PER_SEC * dt;
-        if (xRef.current > containerW) xRef.current = -mascotW;
+        if (xRef.current > containerW) {
+          // Wrapped off the right — go offstage for a random 10–60s.
+          remainingWalkMsRef.current = Math.max(0, burstDuration - (now - startedAt));
+          const pauseMs = OFFSTAGE_MIN_MS + Math.random() * (OFFSTAGE_MAX_MS - OFFSTAGE_MIN_MS);
+          xRef.current = -mascotW; // pre-position offstage left for the reappearance
+          wrapper.style.left = `${xRef.current}px`;
+          setOffstage(true);
+          if (pauseTimerRef.current !== null) clearTimeout(pauseTimerRef.current);
+          pauseTimerRef.current = window.setTimeout(() => {
+            setOffstage(false);
+            pauseTimerRef.current = null;
+          }, pauseMs);
+          return;
+        }
         wrapper.style.left = `${xRef.current}px`;
       }
 
-      // Once the walk duration has elapsed, only settle if the mascot is fully
-      // inside the container (no edge clipping). Otherwise keep walking.
-      if (now - startedAt >= WALK_DURATION_MS && container && wrapper) {
+      // Once this burst's duration has elapsed, only settle if the mascot is
+      // fully inside the container (no edge clipping). Otherwise keep walking.
+      if (now - startedAt >= burstDuration && container && wrapper) {
         const containerW = container.clientWidth;
         const mascotW = wrapper.offsetWidth;
         const fullyVisible = xRef.current >= 0 && xRef.current + mascotW <= containerW;
@@ -178,7 +220,7 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
         ref={wrapperRef}
         onClick={() => requestMood('wave')}
         className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 pointer-events-auto cursor-pointer active:scale-95 transition-transform ${isPlaying ? 'animate-mascot-talk' : ''}`}
-        style={{ left: `${xRef.current}px` }}
+        style={{ left: `${xRef.current}px`, visibility: offstage ? 'hidden' : 'visible' }}
         role="button"
         aria-label="Wave at the mascot"
       >
