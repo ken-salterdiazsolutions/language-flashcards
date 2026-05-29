@@ -1,4 +1,4 @@
-export type Lang = 'japanese' | 'korean' | 'mandarin';
+export type Lang = 'japanese' | 'korean' | 'mandarin' | 'spanish' | 'french' | 'german';
 
 export type BreakdownItem = { char: string; rom: string; meaning?: string };
 
@@ -8,8 +8,26 @@ export type Flashcard = {
   japanese: string;
   korean: string;
   mandarin: string;
-  romanization: Record<Lang, string>;
-  breakdown: Record<Lang, BreakdownItem[]>;
+  /**
+   * Latin-script translations — filled in by EXTRA_TRANSLATIONS overlay
+   * at module load. Required at runtime via the merge loop below.
+   */
+  spanish?: string;
+  french?: string;
+  german?: string;
+  /**
+   * For Asian languages: romanization (e.g. "konnichiwa").
+   * For Latin-script languages: kid-readable phonetic pronunciation
+   * (e.g. "OH-lah" for Spanish "hola"). Latin-script entries filled in
+   * by overlay loop at module load.
+   */
+  romanization: Partial<Record<Lang, string>>;
+  /**
+   * Character/syllable breakdown — meaningful for Asian scripts where
+   * each character has a meaning. Latin-script languages omit it and
+   * the breakdown panel will hide.
+   */
+  breakdown: Partial<Record<Lang, BreakdownItem[]>>;
   /**
    * Kanji (or mixed kanji+kana) form of the Japanese word, when one is
    * commonly written in everyday Japanese. Absent when the word is
@@ -325,6 +343,186 @@ for (const card of flashcards) {
   if (overlay) {
     card.kanji = overlay.kanji;
     card.kanjiBreakdown = overlay.kanjiBreakdown;
+  }
+}
+
+/**
+ * Per-card translations for Spanish / French / German keyed by `english`.
+ * Each entry: word + kid-readable phonetic pronunciation.
+ * Translations are best-effort modern everyday usage targeting a kid audience.
+ */
+type Translation = { word: string; phon: string };
+type LatinRow = { spanish: Translation; french: Translation; german: Translation };
+
+const LATIN_TRANSLATIONS: Record<string, LatinRow> = {
+  // GREETINGS & BASICS
+  "Hello":              { spanish: { word: "Hola",                phon: "OH-lah" },            french: { word: "Bonjour",              phon: "bohn-ZHOOR" },      german: { word: "Hallo",                  phon: "HAH-loh" } },
+  "Thank you":          { spanish: { word: "Gracias",             phon: "GRAH-syahs" },        french: { word: "Merci",                phon: "mehr-SEE" },        german: { word: "Danke",                  phon: "DAHN-keh" } },
+  "Good morning":       { spanish: { word: "Buenos días",         phon: "BWAY-nohs DEE-ahs" }, french: { word: "Bonjour",              phon: "bohn-ZHOOR" },      german: { word: "Guten Morgen",           phon: "GOO-ten MOR-gen" } },
+  "Good night":         { spanish: { word: "Buenas noches",       phon: "BWAY-nahs NOH-chess" },french: { word: "Bonne nuit",          phon: "bun NWEE" },        german: { word: "Gute Nacht",             phon: "GOO-teh nahkt" } },
+  "Goodbye":            { spanish: { word: "Adiós",               phon: "ah-DYOHS" },          french: { word: "Au revoir",            phon: "oh ruh-VWAHR" },    german: { word: "Auf Wiedersehen",        phon: "owf VEE-der-zayn" } },
+  "Please":             { spanish: { word: "Por favor",           phon: "por fah-VOR" },       french: { word: "S'il vous plaît",      phon: "seel voo PLEH" },   german: { word: "Bitte",                  phon: "BIH-teh" } },
+  "Excuse me / Sorry":  { spanish: { word: "Perdón",              phon: "pehr-DOHN" },         french: { word: "Pardon",               phon: "par-DOHN" },        german: { word: "Entschuldigung",         phon: "ent-SHOOL-dee-goong" } },
+  "Yes":                { spanish: { word: "Sí",                  phon: "SEE" },               french: { word: "Oui",                  phon: "WEE" },             german: { word: "Ja",                     phon: "YAH" } },
+  "No":                 { spanish: { word: "No",                  phon: "NOH" },               french: { word: "Non",                  phon: "NOHN" },            german: { word: "Nein",                   phon: "NINE" } },
+
+  // FAMILY
+  "Mother / Mom":       { spanish: { word: "Mamá",                phon: "mah-MAH" },           french: { word: "Maman",                phon: "mah-MAHN" },        german: { word: "Mama",                   phon: "MAH-mah" } },
+  "Father / Dad":       { spanish: { word: "Papá",                phon: "pah-PAH" },           french: { word: "Papa",                 phon: "pah-PAH" },         german: { word: "Papa",                   phon: "PAH-pah" } },
+  "Sister":             { spanish: { word: "Hermana",             phon: "ehr-MAH-nah" },       french: { word: "Sœur",                 phon: "SUR" },             german: { word: "Schwester",              phon: "SHVES-ter" } },
+  "Brother":            { spanish: { word: "Hermano",             phon: "ehr-MAH-noh" },       french: { word: "Frère",                phon: "FREHR" },           german: { word: "Bruder",                 phon: "BROO-der" } },
+  "Grandmother":        { spanish: { word: "Abuela",              phon: "ah-BWAY-lah" },       french: { word: "Grand-mère",           phon: "grahn-MEHR" },      german: { word: "Oma",                    phon: "OH-mah" } },
+  "Grandfather":        { spanish: { word: "Abuelo",              phon: "ah-BWAY-loh" },       french: { word: "Grand-père",           phon: "grahn-PEHR" },      german: { word: "Opa",                    phon: "OH-pah" } },
+  "Love":               { spanish: { word: "Amor",                phon: "ah-MOR" },            french: { word: "Amour",                phon: "ah-MOOR" },         german: { word: "Liebe",                  phon: "LEE-beh" } },
+  "I love you":         { spanish: { word: "Te quiero",           phon: "teh kee-AIR-oh" },    french: { word: "Je t'aime",            phon: "zhuh TEM" },        german: { word: "Ich liebe dich",         phon: "ikh LEE-beh dikh" } },
+
+  // FEELINGS
+  "Happy":              { spanish: { word: "Feliz",               phon: "feh-LEES" },          french: { word: "Heureux",              phon: "uh-RUH" },          german: { word: "Glücklich",              phon: "GLOOK-likh" } },
+  "Sad":                { spanish: { word: "Triste",              phon: "TREES-teh" },         french: { word: "Triste",               phon: "TREEST" },          german: { word: "Traurig",                phon: "TROW-rikh" } },
+  "Hungry":             { spanish: { word: "Tengo hambre",        phon: "TEN-goh AHM-breh" },  french: { word: "J'ai faim",            phon: "zhay FAHM" },       german: { word: "Hunger",                 phon: "HOON-ger" } },
+  "Tired":              { spanish: { word: "Cansado",             phon: "kahn-SAH-doh" },      french: { word: "Fatigué",              phon: "fah-tee-GAY" },     german: { word: "Müde",                   phon: "MUE-deh" } },
+  "Big":                { spanish: { word: "Grande",              phon: "GRAHN-deh" },         french: { word: "Grand",                phon: "GRAHN" },           german: { word: "Groß",                   phon: "GROHS" } },
+  "Small":              { spanish: { word: "Pequeño",             phon: "peh-KEH-nyoh" },      french: { word: "Petit",                phon: "puh-TEE" },         german: { word: "Klein",                  phon: "KLINE" } },
+  "Beautiful":          { spanish: { word: "Hermoso",             phon: "ehr-MOH-soh" },       french: { word: "Beau",                 phon: "BOH" },             german: { word: "Schön",                  phon: "SHURN" } },
+  "Angry":              { spanish: { word: "Enojado",             phon: "eh-noh-HAH-doh" },    french: { word: "Fâché",                phon: "fah-SHAY" },        german: { word: "Wütend",                 phon: "VUE-tend" } },
+  "Scared":             { spanish: { word: "Asustado",            phon: "ah-soos-TAH-doh" },   french: { word: "Effrayé",              phon: "eh-fray-YAY" },     german: { word: "Ängstlich",              phon: "ENGST-likh" } },
+  "Hot":                { spanish: { word: "Caliente",            phon: "kah-LYEN-teh" },      french: { word: "Chaud",                phon: "SHOH" },            german: { word: "Heiß",                   phon: "HICE" } },
+  "Cold":               { spanish: { word: "Frío",                phon: "FREE-oh" },           french: { word: "Froid",                phon: "FRWAH" },           german: { word: "Kalt",                   phon: "KAHLT" } },
+  "Fast":               { spanish: { word: "Rápido",              phon: "RAH-pee-doh" },       french: { word: "Rapide",               phon: "rah-PEED" },        german: { word: "Schnell",                phon: "SHNELL" } },
+  "Slow":               { spanish: { word: "Lento",               phon: "LEN-toh" },           french: { word: "Lent",                 phon: "LAHN" },            german: { word: "Langsam",                phon: "LAHNG-zahm" } },
+  "New":                { spanish: { word: "Nuevo",               phon: "NWAY-voh" },          french: { word: "Nouveau",              phon: "noo-VOH" },         german: { word: "Neu",                    phon: "NOY" } },
+  "Old":                { spanish: { word: "Viejo",               phon: "VYEH-hoh" },          french: { word: "Vieux",                phon: "VYUH" },            german: { word: "Alt",                    phon: "AHLT" } },
+
+  // FOOD
+  "Water":              { spanish: { word: "Agua",                phon: "AH-gwah" },           french: { word: "Eau",                  phon: "OH" },              german: { word: "Wasser",                 phon: "VAH-ser" } },
+  "Rice":               { spanish: { word: "Arroz",               phon: "ah-ROHS" },           french: { word: "Riz",                  phon: "REE" },             german: { word: "Reis",                   phon: "RICE" } },
+  "Milk":               { spanish: { word: "Leche",               phon: "LEH-cheh" },          french: { word: "Lait",                 phon: "LEH" },             german: { word: "Milch",                  phon: "MILKH" } },
+  "Fruit":              { spanish: { word: "Fruta",               phon: "FROO-tah" },          french: { word: "Fruit",                phon: "FRWEE" },           german: { word: "Obst",                   phon: "OHPST" } },
+  "Delicious":          { spanish: { word: "Delicioso",           phon: "deh-lee-SYOH-soh" },  french: { word: "Délicieux",            phon: "day-lee-SYUH" },    german: { word: "Lecker",                 phon: "LEH-ker" } },
+  "Bread":              { spanish: { word: "Pan",                 phon: "PAHN" },              french: { word: "Pain",                 phon: "PAHN" },            german: { word: "Brot",                   phon: "BROHT" } },
+  "Egg":                { spanish: { word: "Huevo",               phon: "WAY-voh" },           french: { word: "Œuf",                  phon: "UF" },              german: { word: "Ei",                     phon: "EYE" } },
+  "Apple":              { spanish: { word: "Manzana",             phon: "mahn-SAH-nah" },      french: { word: "Pomme",                phon: "POHM" },            german: { word: "Apfel",                  phon: "AHP-fel" } },
+  "Banana":             { spanish: { word: "Plátano",             phon: "PLAH-tah-noh" },      french: { word: "Banane",               phon: "bah-NAHN" },        german: { word: "Banane",                 phon: "bah-NAH-neh" } },
+  "Noodles":            { spanish: { word: "Fideos",              phon: "fee-DAY-ohs" },       french: { word: "Nouilles",             phon: "NWEE" },            german: { word: "Nudeln",                 phon: "NOO-deln" } },
+  "Soup":               { spanish: { word: "Sopa",                phon: "SOH-pah" },           french: { word: "Soupe",                phon: "SOOP" },            german: { word: "Suppe",                  phon: "ZOO-peh" } },
+  "Tea":                { spanish: { word: "Té",                  phon: "TAY" },               french: { word: "Thé",                  phon: "TAY" },             german: { word: "Tee",                    phon: "TAY" } },
+  "Cake":               { spanish: { word: "Pastel",              phon: "pahs-TEL" },          french: { word: "Gâteau",               phon: "gah-TOH" },         german: { word: "Kuchen",                 phon: "KOO-khen" } },
+
+  // ANIMALS
+  "Cat":                { spanish: { word: "Gato",                phon: "GAH-toh" },           french: { word: "Chat",                 phon: "SHAH" },            german: { word: "Katze",                  phon: "KAHT-zeh" } },
+  "Dog":                { spanish: { word: "Perro",               phon: "PEH-roh" },           french: { word: "Chien",                phon: "SHYEN" },           german: { word: "Hund",                   phon: "HOONT" } },
+  "Fish":               { spanish: { word: "Pez",                 phon: "PES" },               french: { word: "Poisson",              phon: "pwah-SOHN" },       german: { word: "Fisch",                  phon: "FISH" } },
+  "Bird":               { spanish: { word: "Pájaro",              phon: "PAH-hah-roh" },       french: { word: "Oiseau",               phon: "wah-ZOH" },         german: { word: "Vogel",                  phon: "FOH-gel" } },
+  "Horse":              { spanish: { word: "Caballo",             phon: "kah-BAH-yoh" },       french: { word: "Cheval",               phon: "shuh-VAHL" },       german: { word: "Pferd",                  phon: "PFEHRT" } },
+  "Cow":                { spanish: { word: "Vaca",                phon: "VAH-kah" },           french: { word: "Vache",                phon: "VAHSH" },           german: { word: "Kuh",                    phon: "KOO" } },
+  "Pig":                { spanish: { word: "Cerdo",               phon: "SEHR-doh" },          french: { word: "Cochon",               phon: "koh-SHOHN" },       german: { word: "Schwein",                phon: "SHVINE" } },
+  "Rabbit":             { spanish: { word: "Conejo",              phon: "koh-NEH-hoh" },       french: { word: "Lapin",                phon: "lah-PAHN" },        german: { word: "Hase",                   phon: "HAH-zeh" } },
+  "Mouse":              { spanish: { word: "Ratón",               phon: "rah-TOHN" },          french: { word: "Souris",               phon: "soo-REE" },         german: { word: "Maus",                   phon: "MOWS" } },
+  "Elephant":           { spanish: { word: "Elefante",            phon: "eh-leh-FAHN-teh" },   french: { word: "Éléphant",             phon: "ay-lay-FAHN" },     german: { word: "Elefant",                phon: "eh-leh-FAHNT" } },
+  "Lion":               { spanish: { word: "León",                phon: "leh-OHN" },           french: { word: "Lion",                 phon: "lee-OHN" },         german: { word: "Löwe",                   phon: "LUR-veh" } },
+  "Tiger":              { spanish: { word: "Tigre",               phon: "TEE-greh" },          french: { word: "Tigre",                phon: "TEE-gruh" },        german: { word: "Tiger",                  phon: "TEE-ger" } },
+
+  // SCHOOL
+  "School":             { spanish: { word: "Escuela",             phon: "es-KWAY-lah" },       french: { word: "École",                phon: "ay-KOHL" },         german: { word: "Schule",                 phon: "SHOO-leh" } },
+  "Book":               { spanish: { word: "Libro",               phon: "LEE-broh" },          french: { word: "Livre",                phon: "LEE-vruh" },        german: { word: "Buch",                   phon: "BOOKH" } },
+  "Teacher":            { spanish: { word: "Maestro",             phon: "mah-ES-troh" },       french: { word: "Maître",               phon: "MEHT-ruh" },        german: { word: "Lehrer",                 phon: "LEH-rer" } },
+  "Friend":             { spanish: { word: "Amigo",               phon: "ah-MEE-goh" },        french: { word: "Ami",                  phon: "ah-MEE" },          german: { word: "Freund",                 phon: "FROYNT" } },
+
+  // NUMBERS
+  "One":                { spanish: { word: "Uno",                 phon: "OO-noh" },            french: { word: "Un",                   phon: "UHN" },             german: { word: "Eins",                   phon: "INES" } },
+  "Two":                { spanish: { word: "Dos",                 phon: "DOHS" },              french: { word: "Deux",                 phon: "DUH" },             german: { word: "Zwei",                   phon: "TSVY" } },
+  "Three":              { spanish: { word: "Tres",                phon: "TRESS" },             french: { word: "Trois",                phon: "TRWAH" },           german: { word: "Drei",                   phon: "DRY" } },
+  "Four":               { spanish: { word: "Cuatro",              phon: "KWAH-troh" },         french: { word: "Quatre",               phon: "KAHT-ruh" },        german: { word: "Vier",                   phon: "FEER" } },
+  "Five":               { spanish: { word: "Cinco",               phon: "SEEN-koh" },          french: { word: "Cinq",                 phon: "SANK" },            german: { word: "Fünf",                   phon: "FUENF" } },
+  "Six":                { spanish: { word: "Seis",                phon: "SAYS" },              french: { word: "Six",                  phon: "SEES" },            german: { word: "Sechs",                  phon: "ZEKS" } },
+  "Seven":              { spanish: { word: "Siete",               phon: "SYEH-teh" },          french: { word: "Sept",                 phon: "SET" },             german: { word: "Sieben",                 phon: "ZEE-ben" } },
+  "Eight":              { spanish: { word: "Ocho",                phon: "OH-choh" },           french: { word: "Huit",                 phon: "WEET" },            german: { word: "Acht",                   phon: "AHKHT" } },
+  "Nine":               { spanish: { word: "Nueve",               phon: "NWAY-veh" },          french: { word: "Neuf",                 phon: "NUF" },             german: { word: "Neun",                   phon: "NOYN" } },
+  "Ten":                { spanish: { word: "Diez",                phon: "DYES" },              french: { word: "Dix",                  phon: "DEES" },            german: { word: "Zehn",                   phon: "TSAYN" } },
+  "Eleven":             { spanish: { word: "Once",                phon: "OHN-seh" },           french: { word: "Onze",                 phon: "OHNZ" },            german: { word: "Elf",                    phon: "ELF" } },
+  "Twelve":             { spanish: { word: "Doce",                phon: "DOH-seh" },           french: { word: "Douze",                phon: "DOOZ" },            german: { word: "Zwölf",                  phon: "TSVOLF" } },
+  "Thirteen":           { spanish: { word: "Trece",               phon: "TREH-seh" },          french: { word: "Treize",               phon: "TREZ" },            german: { word: "Dreizehn",               phon: "DRY-tsayn" } },
+  "Twenty":             { spanish: { word: "Veinte",              phon: "VAYN-teh" },          french: { word: "Vingt",                phon: "VAHN" },            german: { word: "Zwanzig",                phon: "TSVAHN-tsikh" } },
+  "Thirty":             { spanish: { word: "Treinta",             phon: "TRAYN-tah" },         french: { word: "Trente",               phon: "TRAHNT" },          german: { word: "Dreißig",                phon: "DRY-sikh" } },
+  "One person":         { spanish: { word: "Una persona",         phon: "OO-nah pehr-SOH-nah" },french: { word: "Une personne",         phon: "uun pair-SUN" },    german: { word: "Eine Person",            phon: "INE-eh pehr-ZOHN" } },
+  "Two people":         { spanish: { word: "Dos personas",        phon: "DOHS pehr-SOH-nahs" },french: { word: "Deux personnes",       phon: "DUH pair-SUN" },    german: { word: "Zwei Personen",          phon: "TSVY pehr-ZOH-nen" } },
+  "One thing":          { spanish: { word: "Una cosa",            phon: "OO-nah KOH-sah" },    french: { word: "Une chose",            phon: "uun SHOHZ" },       german: { word: "Eine Sache",             phon: "INE-eh ZAH-kheh" } },
+  "Two things":         { spanish: { word: "Dos cosas",           phon: "DOHS KOH-sahs" },     french: { word: "Deux choses",          phon: "DUH SHOHZ" },       german: { word: "Zwei Sachen",            phon: "TSVY ZAH-khen" } },
+
+  // COLORS
+  "Red":                { spanish: { word: "Rojo",                phon: "ROH-hoh" },           french: { word: "Rouge",                phon: "ROOZH" },           german: { word: "Rot",                    phon: "ROHT" } },
+  "Blue":               { spanish: { word: "Azul",                phon: "ah-SOOL" },           french: { word: "Bleu",                 phon: "BLUH" },            german: { word: "Blau",                   phon: "BLOW" } },
+  "Yellow":             { spanish: { word: "Amarillo",            phon: "ah-mah-REE-yoh" },    french: { word: "Jaune",                phon: "ZHOHN" },           german: { word: "Gelb",                   phon: "GELP" } },
+  "Green":              { spanish: { word: "Verde",               phon: "VEHR-deh" },          french: { word: "Vert",                 phon: "VEHR" },            german: { word: "Grün",                   phon: "GRUEN" } },
+
+  // PHRASES
+  "Happy Birthday":     { spanish: { word: "Feliz cumpleaños",    phon: "feh-LEES koom-pleh-AH-nyohs" },french: { word: "Joyeux anniversaire", phon: "zhwah-YUH ah-nee-vehr-SAIR" },german: { word: "Alles Gute zum Geburtstag", phon: "AH-les GOO-teh tsoom ge-BOORTS-tahk" } },
+  "How are you?":       { spanish: { word: "¿Cómo estás?",        phon: "KOH-moh es-TAHS" },   french: { word: "Comment ça va ?",      phon: "koh-MAHN sah VAH" },german: { word: "Wie geht's?",            phon: "vee GAYTS" } },
+  "My name is...":      { spanish: { word: "Me llamo...",         phon: "may YAH-moh" },       french: { word: "Je m'appelle...",      phon: "zhuh mah-PEL" },    german: { word: "Ich heiße...",           phon: "ikh HICE-eh" } },
+  "Nice to meet you":   { spanish: { word: "Mucho gusto",         phon: "MOO-choh GOOS-toh" }, french: { word: "Enchanté",             phon: "ahn-shahn-TAY" },   german: { word: "Freut mich",             phon: "FROYT mikh" } },
+  "See you later":      { spanish: { word: "Hasta luego",         phon: "AHS-tah LWAY-goh" },  french: { word: "À plus tard",          phon: "ah PLOO TAR" },     german: { word: "Bis später",             phon: "biss SHPEH-ter" } },
+  "Let's eat!":         { spanish: { word: "¡A comer!",           phon: "ah koh-MEHR" },       french: { word: "À table !",            phon: "ah TAH-bluh" },     german: { word: "Lass uns essen!",        phon: "lahss oons ES-en" } },
+  "Good job!":          { spanish: { word: "¡Buen trabajo!",      phon: "BWEN trah-BAH-hoh" },french: { word: "Bon travail !",         phon: "bohn trah-VAI" },   german: { word: "Gut gemacht!",           phon: "GOOT ge-MAHKHT" } },
+  "What is this?":      { spanish: { word: "¿Qué es esto?",       phon: "kay es ES-toh" },     french: { word: "Qu'est-ce que c'est ?",phon: "kes kuh SEH" },     german: { word: "Was ist das?",           phon: "vahss ist dahss" } },
+  "Where is the bathroom?":{ spanish: { word: "¿Dónde está el baño?",phon: "DOHN-deh es-TAH el BAH-nyoh" },french: { word: "Où sont les toilettes ?",phon: "oo sohn lay twah-LET" },german: { word: "Wo ist die Toilette?",    phon: "voh ist dee twa-LET-eh" } },
+  "I don't understand": { spanish: { word: "No entiendo",         phon: "noh en-TYEN-doh" },   french: { word: "Je ne comprends pas",  phon: "zhuh nuh kohm-PRAHN pah" },german: { word: "Ich verstehe nicht",    phon: "ikh fehr-SHTAY-eh nikht" } },
+
+  // BODY
+  "Eyes":               { spanish: { word: "Ojos",                phon: "OH-hohs" },           french: { word: "Yeux",                 phon: "YUH" },             german: { word: "Augen",                  phon: "OW-gen" } },
+  "Ears":               { spanish: { word: "Orejas",              phon: "oh-REH-hahs" },       french: { word: "Oreilles",             phon: "oh-RAY" },          german: { word: "Ohren",                  phon: "OH-ren" } },
+  "Nose":               { spanish: { word: "Nariz",               phon: "nah-REES" },          french: { word: "Nez",                  phon: "NAY" },             german: { word: "Nase",                   phon: "NAH-zeh" } },
+  "Mouth":              { spanish: { word: "Boca",                phon: "BOH-kah" },           french: { word: "Bouche",               phon: "BOOSH" },           german: { word: "Mund",                   phon: "MOONT" } },
+  "Hands":              { spanish: { word: "Manos",               phon: "MAH-nohs" },          french: { word: "Mains",                phon: "MAHN" },            german: { word: "Hände",                  phon: "HEN-deh" } },
+  "Feet":               { spanish: { word: "Pies",                phon: "PYES" },              french: { word: "Pieds",                phon: "PYAY" },            german: { word: "Füße",                   phon: "FUE-seh" } },
+  "Head":               { spanish: { word: "Cabeza",              phon: "kah-BEH-sah" },       french: { word: "Tête",                 phon: "TET" },             german: { word: "Kopf",                   phon: "KOHPF" } },
+  "Hair":               { spanish: { word: "Pelo",                phon: "PEH-loh" },           french: { word: "Cheveux",              phon: "shuh-VUH" },        german: { word: "Haare",                  phon: "HAH-reh" } },
+
+  // TIME
+  "Today":              { spanish: { word: "Hoy",                 phon: "OY" },                french: { word: "Aujourd'hui",          phon: "oh-zhoor-DWEE" },   german: { word: "Heute",                  phon: "HOY-teh" } },
+  "Tomorrow":           { spanish: { word: "Mañana",              phon: "mah-NYAH-nah" },      french: { word: "Demain",               phon: "duh-MAHN" },        german: { word: "Morgen",                 phon: "MOR-gen" } },
+  "Yesterday":          { spanish: { word: "Ayer",                phon: "ah-YEHR" },           french: { word: "Hier",                 phon: "YEHR" },            german: { word: "Gestern",                phon: "GES-tern" } },
+  "Morning":            { spanish: { word: "Mañana",              phon: "mah-NYAH-nah" },      french: { word: "Matin",                phon: "mah-TAHN" },        german: { word: "Morgen",                 phon: "MOR-gen" } },
+  "Night":              { spanish: { word: "Noche",               phon: "NOH-cheh" },          french: { word: "Nuit",                 phon: "NWEE" },            german: { word: "Nacht",                  phon: "NAHKHT" } },
+  "Week":               { spanish: { word: "Semana",              phon: "seh-MAH-nah" },       french: { word: "Semaine",              phon: "suh-MEN" },         german: { word: "Woche",                  phon: "VOH-kheh" } },
+  "Month":              { spanish: { word: "Mes",                 phon: "MES" },               french: { word: "Mois",                 phon: "MWAH" },            german: { word: "Monat",                  phon: "MOH-naht" } },
+  "Year":               { spanish: { word: "Año",                 phon: "AH-nyoh" },           french: { word: "Année",                phon: "ah-NAY" },          german: { word: "Jahr",                   phon: "YAHR" } },
+
+  // ACTIONS
+  "Eat":                { spanish: { word: "Comer",               phon: "koh-MEHR" },          french: { word: "Manger",               phon: "mahn-ZHAY" },       german: { word: "Essen",                  phon: "ES-en" } },
+  "Drink":              { spanish: { word: "Beber",               phon: "beh-BEHR" },          french: { word: "Boire",                phon: "BWAHR" },           german: { word: "Trinken",                phon: "TRINK-en" } },
+  "Sleep":              { spanish: { word: "Dormir",              phon: "dor-MEER" },          french: { word: "Dormir",               phon: "dor-MEER" },        german: { word: "Schlafen",               phon: "SHLAH-fen" } },
+  "Run":                { spanish: { word: "Correr",              phon: "koh-REHR" },          french: { word: "Courir",               phon: "koo-REER" },        german: { word: "Laufen",                 phon: "LOW-fen" } },
+  "Walk":               { spanish: { word: "Caminar",             phon: "kah-mee-NAR" },       french: { word: "Marcher",              phon: "mar-SHAY" },        german: { word: "Gehen",                  phon: "GAY-en" } },
+  "Read":               { spanish: { word: "Leer",                phon: "leh-EHR" },           french: { word: "Lire",                 phon: "LEER" },            german: { word: "Lesen",                  phon: "LAY-zen" } },
+  "Write":              { spanish: { word: "Escribir",            phon: "es-kree-BEER" },      french: { word: "Écrire",               phon: "ay-KREER" },        german: { word: "Schreiben",              phon: "SHRY-ben" } },
+  "Sing":               { spanish: { word: "Cantar",              phon: "kahn-TAR" },          french: { word: "Chanter",              phon: "shahn-TAY" },       german: { word: "Singen",                 phon: "ZING-en" } },
+
+  // WEATHER
+  "Sunny":              { spanish: { word: "Soleado",             phon: "soh-leh-AH-doh" },    french: { word: "Ensoleillé",           phon: "ahn-so-leh-YAY" },  german: { word: "Sonnig",                 phon: "ZOHN-ikh" } },
+  "Rainy":              { spanish: { word: "Lluvioso",            phon: "yoo-VYOH-soh" },      french: { word: "Pluvieux",             phon: "ploo-VYUH" },       german: { word: "Regnerisch",             phon: "RAYG-ner-ish" } },
+  "Cloudy":             { spanish: { word: "Nublado",             phon: "noo-BLAH-doh" },      french: { word: "Nuageux",              phon: "noo-ah-ZHUH" },     german: { word: "Bewölkt",                phon: "be-VURLKT" } },
+  "Snowy":              { spanish: { word: "Nevado",              phon: "neh-VAH-doh" },       french: { word: "Neigeux",              phon: "neh-ZHUH" },        german: { word: "Schneereich",            phon: "SHNAY-rikh" } },
+  "Windy":              { spanish: { word: "Ventoso",             phon: "ven-TOH-soh" },       french: { word: "Venteux",              phon: "vahn-TUH" },        german: { word: "Windig",                 phon: "VIN-dikh" } },
+
+  // TRANSPORT
+  "Car":                { spanish: { word: "Coche",               phon: "KOH-cheh" },          french: { word: "Voiture",              phon: "vwah-TUUR" },       german: { word: "Auto",                   phon: "OW-toh" } },
+  "Bus":                { spanish: { word: "Autobús",             phon: "ow-toh-BOOS" },       french: { word: "Bus",                  phon: "BOOS" },            german: { word: "Bus",                    phon: "BOOS" } },
+  "Train":              { spanish: { word: "Tren",                phon: "TREN" },              french: { word: "Train",                phon: "TRAHN" },           german: { word: "Zug",                    phon: "TSOOK" } },
+  "Plane":              { spanish: { word: "Avión",               phon: "ah-VYOHN" },          french: { word: "Avion",                phon: "ah-VYOHN" },        german: { word: "Flugzeug",               phon: "FLOOK-tsoyk" } },
+  "Bike":               { spanish: { word: "Bicicleta",           phon: "bee-see-KLEH-tah" },  french: { word: "Vélo",                 phon: "vay-LOH" },         german: { word: "Fahrrad",                phon: "FAR-raht" } },
+  "Boat":               { spanish: { word: "Barco",               phon: "BAR-koh" },           french: { word: "Bateau",               phon: "bah-TOH" },         german: { word: "Boot",                   phon: "BOHT" } },
+};
+
+// Merge Latin-script translations into flashcards
+for (const card of flashcards) {
+  const t = LATIN_TRANSLATIONS[card.english];
+  if (t) {
+    card.spanish = t.spanish.word;
+    card.french = t.french.word;
+    card.german = t.german.word;
+    card.romanization.spanish = t.spanish.phon;
+    card.romanization.french = t.french.phon;
+    card.romanization.german = t.german.phon;
   }
 }
 

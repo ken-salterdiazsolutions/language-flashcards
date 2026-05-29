@@ -23,7 +23,11 @@ export function ensureSignedIn() {
   return signInPromise;
 }
 
+export type SynthesizeLang =
+  | "japanese" | "korean" | "mandarin"
+  | "spanish" | "french" | "german";
+
 export const synthesizeSpeech = httpsCallable<
-  { text: string; lang: "japanese" | "korean" | "mandarin" },
+  { text: string; lang: SynthesizeLang },
   { audioBase64: string; mimeType: string }
 >(functions, "synthesizeSpeech");

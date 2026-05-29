@@ -4,12 +4,17 @@ import { TextToSpeechClient } from "@google-cloud/text-to-speech";
 
 setGlobalOptions({ maxInstances: 10 });
 
-type Lang = "japanese" | "korean" | "mandarin";
+type Lang =
+  | "japanese" | "korean" | "mandarin"
+  | "spanish" | "french" | "german";
 
 const VOICE_BY_LANG: Record<Lang, { languageCode: string; name: string }> = {
   japanese: { languageCode: "ja-JP", name: "ja-JP-Neural2-B" },
   korean: { languageCode: "ko-KR", name: "ko-KR-Neural2-A" },
   mandarin: { languageCode: "cmn-CN", name: "cmn-CN-Wavenet-A" },
+  spanish: { languageCode: "es-ES", name: "es-ES-Neural2-A" },
+  french: { languageCode: "fr-FR", name: "fr-FR-Neural2-A" },
+  german: { languageCode: "de-DE", name: "de-DE-Neural2-A" },
 };
 
 const client = new TextToSpeechClient();

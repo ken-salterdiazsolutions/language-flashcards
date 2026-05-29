@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Volume2, Sparkles } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech } from './firebase';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
@@ -15,6 +15,8 @@ type LangTheme = {
   ring: string;
   buttonBg: string;
   buttonShadow: string;
+  /** Tailwind arbitrary box-shadow for the active language pill's glow effect */
+  glow: string;
 };
 
 const LANG_THEME: Record<Lang, LangTheme> = {
@@ -27,6 +29,7 @@ const LANG_THEME: Record<Lang, LangTheme> = {
     ring: 'ring-rose-300',
     buttonBg: 'bg-rose-500 hover:bg-rose-600',
     buttonShadow: 'shadow-[0_6px_0_0_rgb(159_18_57)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(251,113,133,0.55)]',
   },
   korean: {
     label: 'Korean',
@@ -37,6 +40,7 @@ const LANG_THEME: Record<Lang, LangTheme> = {
     ring: 'ring-sky-300',
     buttonBg: 'bg-sky-500 hover:bg-sky-600',
     buttonShadow: 'shadow-[0_6px_0_0_rgb(7_89_133)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(56,189,248,0.55)]',
   },
   mandarin: {
     label: 'Mandarin',
@@ -47,6 +51,40 @@ const LANG_THEME: Record<Lang, LangTheme> = {
     ring: 'ring-amber-300',
     buttonBg: 'bg-amber-500 hover:bg-amber-600',
     buttonShadow: 'shadow-[0_6px_0_0_rgb(146_64_14)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(251,191,36,0.55)]',
+  },
+  spanish: {
+    label: 'Spanish',
+    short: 'Español',
+    stripe: 'bg-fuchsia-400',
+    chip: 'bg-fuchsia-100',
+    chipText: 'text-fuchsia-700',
+    ring: 'ring-fuchsia-300',
+    buttonBg: 'bg-fuchsia-500 hover:bg-fuchsia-600',
+    buttonShadow: 'shadow-[0_6px_0_0_rgb(162_28_175)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(232,121,249,0.55)]',
+  },
+  french: {
+    label: 'French',
+    short: 'Français',
+    stripe: 'bg-indigo-400',
+    chip: 'bg-indigo-100',
+    chipText: 'text-indigo-700',
+    ring: 'ring-indigo-300',
+    buttonBg: 'bg-indigo-500 hover:bg-indigo-600',
+    buttonShadow: 'shadow-[0_6px_0_0_rgb(55_48_163)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(129,140,248,0.55)]',
+  },
+  german: {
+    label: 'German',
+    short: 'Deutsch',
+    stripe: 'bg-emerald-400',
+    chip: 'bg-emerald-100',
+    chipText: 'text-emerald-700',
+    ring: 'ring-emerald-300',
+    buttonBg: 'bg-emerald-500 hover:bg-emerald-600',
+    buttonShadow: 'shadow-[0_6px_0_0_rgb(6_95_70)]',
+    glow: 'shadow-[0_0_12px_2px_rgba(52,211,153,0.55)]',
   },
 };
 
@@ -61,6 +99,31 @@ const MultilingualFlashcards = () => {
   const [revealCount, setRevealCount] = useState(0);
   const [navCount, setNavCount] = useState(0);
   const { streak, recordVisit } = useStreak();
+
+  // Language strip scroll state — mirrors CategoryStrip's behavior so the
+  // language picker can show prev/next chevron arrows on desktop.
+  const langScrollerRef = useRef<HTMLDivElement>(null);
+  const [langCanScrollLeft, setLangCanScrollLeft] = useState(false);
+  const [langCanScrollRight, setLangCanScrollRight] = useState(false);
+  useEffect(() => {
+    const el = langScrollerRef.current;
+    if (!el) return;
+    const update = () => {
+      setLangCanScrollLeft(el.scrollLeft > 4);
+      setLangCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+    };
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, []);
+  const scrollLangBy = (delta: number) => {
+    langScrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
+  };
 
   // Match the card flip animation duration. If the user changes language or
   // category while the card is flipped to the back, flip it back to the
@@ -86,8 +149,12 @@ const MultilingualFlashcards = () => {
   };
 
   const canShowKanji = selectedLanguage === 'japanese' && !!card.kanji;
-  const displayWord = canShowKanji && showKanji && card.kanji ? card.kanji : card[selectedLanguage];
-  const displayBreakdown = canShowKanji && showKanji && card.kanjiBreakdown ? card.kanjiBreakdown : card.breakdown[selectedLanguage];
+  const displayWord = canShowKanji && showKanji && card.kanji ? card.kanji : (card[selectedLanguage] ?? '');
+  const displayRomanization = card.romanization[selectedLanguage] ?? '';
+  // breakdown is only populated for Asian-script languages (jp/ko/zh). Latin-
+  // script langs don't have meaningful per-character breakdowns.
+  const breakdownForLang = canShowKanji && showKanji && card.kanjiBreakdown ? card.kanjiBreakdown : card.breakdown[selectedLanguage];
+  const canShowBreakdown = !!breakdownForLang;
 
   const nextCard = () => {
     setCurrentCard((prev) => (prev + 1) % filtered.length);
@@ -145,26 +212,51 @@ const MultilingualFlashcards = () => {
           )}
         </header>
 
-        {/* Language picker */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
-          {(Object.keys(LANG_THEME) as Lang[]).map((lang) => {
-            const t = LANG_THEME[lang];
-            const active = selectedLanguage === lang;
-            return (
-              <button
-                key={lang}
-                onClick={() => afterFlipBack(() => setSelectedLanguage(lang))}
-                className={`rounded-2xl px-2 py-3 font-bold transition-all ${
-                  active
-                    ? `bg-white text-slate-800 ring-4 ${t.ring} shadow-md scale-[1.02]`
-                    : 'bg-white/60 text-slate-500 hover:bg-white/80'
-                }`}
-              >
-                <div className="text-sm sm:text-base">{t.label}</div>
-                <div className={`text-base sm:text-lg ${active ? t.chipText : ''}`}>{t.short}</div>
-              </button>
-            );
-          })}
+        {/* Language picker — scrollable strip */}
+        <div className="relative mb-4 sm:mb-6 px-4 md:px-12">
+          {langCanScrollLeft && (
+            <button
+              onClick={() => scrollLangBy(-200)}
+              aria-label="Scroll languages left"
+              className="hidden md:[@media(hover:hover)]:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+          {langCanScrollRight && (
+            <button
+              onClick={() => scrollLangBy(200)}
+              aria-label="Scroll languages right"
+              className="hidden md:[@media(hover:hover)]:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+          <div
+            ref={langScrollerRef}
+            className="flex gap-2 overflow-x-auto scroll-smooth py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <div className="shrink-0 w-4" aria-hidden="true" />
+            {(Object.keys(LANG_THEME) as Lang[]).map((lang) => {
+              const t = LANG_THEME[lang];
+              const active = selectedLanguage === lang;
+              return (
+                <button
+                  key={lang}
+                  onClick={() => afterFlipBack(() => setSelectedLanguage(lang))}
+                  className={`shrink-0 rounded-2xl px-4 py-3 font-bold transition-all min-w-[100px] sm:min-w-[120px] ${
+                    active
+                      ? `bg-white text-slate-800 ${t.glow}`
+                      : 'bg-white/60 text-slate-500 hover:bg-white/80'
+                  }`}
+                >
+                  <div className="text-sm sm:text-base">{t.label}</div>
+                  <div className={`text-base sm:text-lg ${active ? t.chipText : ''}`}>{t.short}</div>
+                </button>
+              );
+            })}
+            <div className="shrink-0 w-4" aria-hidden="true" />
+          </div>
         </div>
 
         {/* Category strip — horizontal scroll with auto-centered active pill */}
@@ -249,7 +341,7 @@ const MultilingualFlashcards = () => {
                     {displayWord}
                   </div>
                   <div className="text-lg sm:text-2xl text-slate-500 font-bold">
-                    {card.romanization[selectedLanguage]}
+                    {displayRomanization}
                   </div>
                   <div className="text-sm sm:text-base text-slate-400 italic">
                     {card.english}
@@ -273,7 +365,7 @@ const MultilingualFlashcards = () => {
         {showAnswer && (
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <button
-              onClick={() => playSound(card[selectedLanguage], selectedLanguage)}
+              onClick={() => playSound(card[selectedLanguage] ?? '', selectedLanguage)}
               disabled={isPlaying}
               className={`flex-1 rounded-2xl py-4 text-white font-extrabold text-base sm:text-lg ${theme.buttonBg} ${theme.buttonShadow} active:translate-y-1 active:shadow-none transition-all disabled:opacity-70 disabled:cursor-wait flex items-center justify-center gap-2`}
             >
@@ -289,23 +381,25 @@ const MultilingualFlashcards = () => {
                 </>
               )}
             </button>
-            <button
-              onClick={() => setShowBreakdown(!showBreakdown)}
-              className="flex-1 rounded-2xl py-4 bg-violet-500 hover:bg-violet-600 text-white font-extrabold text-base sm:text-lg shadow-[0_6px_0_0_rgb(91_33_182)] active:translate-y-1 active:shadow-none transition-all"
-            >
-              {showBreakdown ? '📚 Hide breakdown' : '🔍 Show breakdown'}
-            </button>
+            {canShowBreakdown && (
+              <button
+                onClick={() => setShowBreakdown(!showBreakdown)}
+                className="flex-1 rounded-2xl py-4 bg-violet-500 hover:bg-violet-600 text-white font-extrabold text-base sm:text-lg shadow-[0_6px_0_0_rgb(91_33_182)] active:translate-y-1 active:shadow-none transition-all"
+              >
+                {showBreakdown ? '📚 Hide breakdown' : '🔍 Show breakdown'}
+              </button>
+            )}
           </div>
         )}
 
         {/* Breakdown panel */}
-        {showAnswer && showBreakdown && (
+        {showAnswer && showBreakdown && breakdownForLang && (
           <div className="bg-white/80 backdrop-blur rounded-3xl p-4 sm:p-6 mb-6 shadow-md">
             <h3 className="font-extrabold text-slate-700 text-center mb-4 text-base sm:text-lg">
               Character breakdown
             </h3>
             <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
-              {displayBreakdown.map((item, i) => (
+              {breakdownForLang.map((item, i) => (
                 <div key={i} className="bg-white rounded-2xl p-3 text-center min-w-14 sm:min-w-18 shadow-sm border border-slate-100">
                   <div className="text-2xl sm:text-3xl font-black text-slate-800 mb-1">{item.char}</div>
                   <div className={`text-xs sm:text-sm font-bold ${theme.chipText}`}>{item.rom}</div>
