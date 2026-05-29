@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import celebratingUrl from './assets/mascot-celebrating.json?url';
+import streakFireUrl from './assets/streak-fire.json?url';
 
 type Props = {
   streak: number;
@@ -93,9 +94,11 @@ export function StreakModal({ streak, open, onClose }: Props) {
           <DotLottieReact src={celebratingUrl} loop autoplay />
         </div>
 
-        {/* Streak number with fire */}
+        {/* Streak number with animated fire */}
         <div className="flex items-center justify-center gap-2 mb-3">
-          <span className="text-5xl sm:text-6xl streak-fire-emoji">🔥</span>
+          <div className="w-16 h-16 sm:w-20 sm:h-20">
+            <DotLottieReact src={streakFireUrl} loop autoplay />
+          </div>
           <span className="text-6xl sm:text-7xl font-black text-amber-600">{streak}</span>
         </div>
 
