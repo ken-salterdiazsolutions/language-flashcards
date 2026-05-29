@@ -114,12 +114,16 @@ export const transcribeSpeech = onCall(
 
     const languageCode = STT_LANG_CODE[lang];
 
+    const isLinear16 = encoding === protos.google.cloud.speech.v1.RecognitionConfig.AudioEncoding.LINEAR16;
+
     const [response] = await sttClient.recognize({
       audio: { content: audioBase64 },
       config: {
         encoding,
-        // Most browser MediaRecorder outputs don't need explicit sampleRate.
-        // STT auto-detects from the container for WEBM_OPUS / OGG_OPUS / MP3.
+        // For WEBM_OPUS / OGG_OPUS / MP3 the rate is read from the container,
+        // but LINEAR16 requires it to be set explicitly. Frontend resamples
+        // to 48kHz mono WAV before upload (see audioConvert.ts).
+        ...(isLinear16 ? { sampleRateHertz: 48000 } : {}),
         languageCode,
         model: "latest_short",
         enableAutomaticPunctuation: false,

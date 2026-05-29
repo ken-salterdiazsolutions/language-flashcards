@@ -31,3 +31,8 @@ export const synthesizeSpeech = httpsCallable<
   { text: string; lang: SynthesizeLang },
   { audioBase64: string; mimeType: string }
 >(functions, "synthesizeSpeech");
+
+export const transcribeSpeech = httpsCallable<
+  { audioBase64: string; mimeType: string; lang: SynthesizeLang },
+  { transcript: string; confidence: number }
+>(functions, "transcribeSpeech");

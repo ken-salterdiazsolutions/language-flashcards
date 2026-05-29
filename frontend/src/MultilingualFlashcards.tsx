@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Volume2, Sparkles } from 'lucide-react';
-import { ensureSignedIn, synthesizeSpeech } from './firebase';
+import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './firebase';
+import { useAudioRecorder } from './useAudioRecorder';
+import { resampleToWav48k } from './audioConvert';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
 import { CategoryStrip } from './CategoryStrip';
@@ -91,6 +93,24 @@ const LANG_THEME: Record<Lang, LangTheme> = {
   },
 };
 
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== 'string') {
+        reject(new Error('FileReader returned non-string'));
+        return;
+      }
+      // result is "data:<mime>;base64,<actual base64>" — strip the prefix
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
+    reader.readAsDataURL(blob);
+  });
+}
+
 const MultilingualFlashcards = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -103,6 +123,8 @@ const MultilingualFlashcards = () => {
   const [navCount, setNavCount] = useState(0);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const { streak, recordVisit } = useStreak();
+  // Phase 2 test scaffolding for pronunciation feature — temporary
+  const audioRecorder = useAudioRecorder();
 
   // Language strip scroll state — mirrors CategoryStrip's behavior so the
   // language picker can show prev/next chevron arrows on desktop.
@@ -193,6 +215,41 @@ const MultilingualFlashcards = () => {
       console.error(e);
       setIsPlaying(false);
     }
+  };
+
+  // Phase 2 test only — verifies the audio-recording → STT pipeline end-to-end.
+  // Removed/replaced in Phase 3. Logs results to the dev console.
+  const handleTestTranscribe = async () => {
+    if (audioRecorder.isRecording) {
+      audioRecorder.stop();
+      return;
+    }
+    const target = card[selectedLanguage] ?? '';
+    console.log('[TEST] recording for:', { target, lang: selectedLanguage });
+    audioRecorder.start(async ({ blob, mimeType }) => {
+      try {
+        // Browsers often record at 44.1kHz WebM/Opus, which Google STT rejects.
+        // Convert client-side to canonical 48kHz mono LINEAR16 WAV first.
+        const converted = await resampleToWav48k(blob);
+        const audioBase64 = await blobToBase64(converted.blob);
+        await ensureSignedIn();
+        const { data } = await transcribeSpeech({
+          audioBase64,
+          mimeType: converted.mimeType,
+          lang: selectedLanguage,
+        });
+        console.log('[TEST] result:', {
+          target,
+          transcript: data.transcript,
+          confidence: data.confidence,
+          originalMimeType: mimeType,
+          originalSize: blob.size,
+          convertedSize: converted.blob.size,
+        });
+      } catch (e) {
+        console.error('[TEST] transcribe failed:', e);
+      }
+    });
   };
 
   return (
@@ -402,6 +459,27 @@ const MultilingualFlashcards = () => {
               >
                 {showBreakdown ? '📚 Hide breakdown' : '🔍 Show breakdown'}
               </button>
+            )}
+          </div>
+        )}
+
+        {/* Phase 2 TEMP — pronunciation test button. Replaced in Phase 3. */}
+        {showAnswer && (
+          <div className="mb-6">
+            <button
+              onClick={handleTestTranscribe}
+              className={`w-full rounded-2xl py-3 font-bold text-sm transition-all ${
+                audioRecorder.isRecording
+                  ? 'bg-red-500 text-white animate-pulse'
+                  : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+              }`}
+            >
+              {audioRecorder.isRecording
+                ? '🎤 Listening… (click to stop, or stay silent)'
+                : '🧪 TEST: record pronunciation → console'}
+            </button>
+            {audioRecorder.error && (
+              <p className="text-xs text-red-600 mt-1 text-center">{audioRecorder.error}</p>
             )}
           </div>
         )}
