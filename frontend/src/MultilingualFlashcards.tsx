@@ -6,6 +6,7 @@ import { resampleToWav48k } from './audioConvert';
 import { judgePronunciation, type Judgment } from './judgePronunciation';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
+import { usePronunciationStreak } from './usePronunciationStreak';
 import { CategoryStrip } from './CategoryStrip';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
@@ -192,7 +193,9 @@ const MultilingualFlashcards = () => {
   const [revealCount, setRevealCount] = useState(0);
   const [navCount, setNavCount] = useState(0);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
+  const [pronStreakModalOpen, setPronStreakModalOpen] = useState(false);
   const { streak, recordVisit } = useStreak();
+  const pronunciationStreakState = usePronunciationStreak();
 
   // Pronunciation feature state.
   // pronStatus drives the mic button UI; pronJudgment holds the most recent
@@ -322,6 +325,11 @@ const MultilingualFlashcards = () => {
         });
         const judgment = judgePronunciation(target, data.transcript, data.confidence, selectedLanguage);
         setPronJudgment(judgment);
+        if (judgment.verdict === 'perfect' || judgment.verdict === 'close') {
+          pronunciationStreakState.recordCorrect();
+        }
+        // wrong/unclear: no streak change yet. The user can retry; the skip
+        // button on the wrong-result panel is the explicit reset trigger.
       } catch (e) {
         console.error('[pron] transcribe failed:', e);
         // Treat backend failures as "unclear" so the user can retry without
@@ -351,23 +359,40 @@ const MultilingualFlashcards = () => {
               Flashcards
             </h1>
           </div>
-          <button
-            onClick={() => setStreakModalOpen(true)}
-            className="flex items-center gap-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
-            aria-label="Show streak details"
-          >
-            <span className="inline-block w-6 h-6 sm:w-7 sm:h-7 -my-1">
-              <DotLottieReact src={streakFireUrl} loop autoplay />
-            </span>
-            {streak > 0 ? (
-              <>
-                <span>{streak}</span>
-                <span className="hidden sm:inline text-amber-800/80 font-semibold">day streak</span>
-              </>
-            ) : (
-              <span className="font-semibold">Start a streak!</span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setStreakModalOpen(true)}
+              className="flex items-center gap-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
+              aria-label="Show day streak details"
+            >
+              <span className="inline-block w-6 h-6 sm:w-7 sm:h-7 -my-1">
+                <DotLottieReact src={streakFireUrl} loop autoplay />
+              </span>
+              {streak > 0 ? (
+                <>
+                  <span>{streak}</span>
+                  <span className="hidden sm:inline text-amber-800/80 font-semibold">day streak</span>
+                </>
+              ) : (
+                <span className="font-semibold">Day streak!</span>
+              )}
+            </button>
+            <button
+              onClick={() => setPronStreakModalOpen(true)}
+              className="flex items-center gap-1.5 bg-violet-200 hover:bg-violet-300 text-violet-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
+              aria-label="Show pronunciation streak details"
+            >
+              <span className="text-base sm:text-lg">🎯</span>
+              {pronunciationStreakState.streak > 0 ? (
+                <>
+                  <span>{pronunciationStreakState.streak}</span>
+                  <span className="hidden sm:inline text-violet-800/80 font-semibold">in a row</span>
+                </>
+              ) : (
+                <span className="font-semibold">Say streak!</span>
+              )}
+            </button>
+          </div>
         </header>
 
         {/* Language picker — scrollable strip */}
@@ -580,7 +605,7 @@ const MultilingualFlashcards = () => {
               handleRecordPronunciation();
             }}
             onSkip={() => {
-              // Phase 4 will reset the pronunciation streak here.
+              pronunciationStreakState.recordSkip();
               setPronJudgment(null);
             }}
           />
@@ -632,9 +657,16 @@ const MultilingualFlashcards = () => {
       </div>
 
       <StreakModal
+        kind="day"
         streak={streak}
         open={streakModalOpen}
         onClose={() => setStreakModalOpen(false)}
+      />
+      <StreakModal
+        kind="pronunciation"
+        streak={pronunciationStreakState.streak}
+        open={pronStreakModalOpen}
+        onClose={() => setPronStreakModalOpen(false)}
       />
     </div>
   );

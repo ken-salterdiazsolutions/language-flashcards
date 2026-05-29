@@ -3,35 +3,40 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import celebratingUrl from './assets/mascot-celebrating.json?url';
 import streakFireUrl from './assets/streak-fire.json?url';
 
+type Kind = 'day' | 'pronunciation';
+
 type Props = {
+  kind: Kind;
   streak: number;
   open: boolean;
   onClose: () => void;
 };
 
-const MILESTONES = [3, 7, 14, 30, 60, 100];
+const DAY_MILESTONES = [3, 7, 14, 30, 60, 100];
+const PRONUNCIATION_MILESTONES = [1, 5, 10, 15, 20, 25, 50, 100];
 
-function nextMilestone(streak: number): number | null {
-  return MILESTONES.find(m => m > streak) ?? null;
+function nextMilestone(streak: number, kind: Kind): number | null {
+  const list = kind === 'day' ? DAY_MILESTONES : PRONUNCIATION_MILESTONES;
+  return list.find(m => m > streak) ?? null;
 }
 
-function headline(streak: number): { title: string; body: string } {
+function dayHeadline(streak: number): { title: string; body: string } {
   if (streak === 0) {
     return {
       title: 'Ready to start a streak?',
-      body: "Flip a card to begin! Come back every day to build your streak and unlock celebrations.",
+      body: 'Flip a card to begin! Come back every day to build your streak and unlock celebrations.',
     };
   }
   if (streak === 1) {
     return {
       title: 'You started a streak!',
-      body: "Come back tomorrow and the day after to keep it going!",
+      body: 'Come back tomorrow and the day after to keep it going!',
     };
   }
   if (streak < 7) {
     return {
       title: `${streak} days in a row!`,
-      body: "Awesome! Keep practicing every day to make your streak grow.",
+      body: 'Awesome! Keep practicing every day to make your streak grow.',
     };
   }
   if (streak < 14) {
@@ -52,8 +57,52 @@ function headline(streak: number): { title: string; body: string } {
   };
 }
 
-export function StreakModal({ streak, open, onClose }: Props) {
-  // Close on Escape
+function pronunciationHeadline(streak: number): { title: string; body: string } {
+  if (streak === 0) {
+    return {
+      title: 'Try saying it out loud!',
+      body: 'Flip a card, tap the mic, and pronounce the word. Each correct one adds to your streak.',
+    };
+  }
+  if (streak === 1) {
+    return {
+      title: 'First one — nice!',
+      body: 'Keep going to build a pronunciation streak.',
+    };
+  }
+  if (streak < 5) {
+    return {
+      title: `${streak} in a row!`,
+      body: "You're warming up. Keep practicing!",
+    };
+  }
+  if (streak < 10) {
+    return {
+      title: 'High five!',
+      body: `${streak} correct pronunciations in a row! You're getting the hang of it.`,
+    };
+  }
+  if (streak < 25) {
+    return {
+      title: 'Pronunciation pro!',
+      body: `${streak} in a row! Your accent is really shaping up.`,
+    };
+  }
+  return {
+    title: 'Pronunciation champion!',
+    body: `${streak} in a row! That's incredible.`,
+  };
+}
+
+function teaserText(streak: number, next: number, kind: Kind): string {
+  const remaining = next - streak;
+  if (kind === 'day') {
+    return remaining === 1 ? '1 more day to reach ' + next + '!' : `${remaining} more days to reach ${next}!`;
+  }
+  return remaining === 1 ? '1 more to reach ' + next + '!' : `${remaining} more to reach ${next}!`;
+}
+
+export function StreakModal({ kind, streak, open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -65,15 +114,17 @@ export function StreakModal({ streak, open, onClose }: Props) {
 
   if (!open) return null;
 
-  const { title, body } = headline(streak);
-  const next = nextMilestone(streak);
-  const remaining = next !== null ? next - streak : null;
+  const { title, body } = kind === 'day' ? dayHeadline(streak) : pronunciationHeadline(streak);
+  const next = nextMilestone(streak, kind);
+  const labelId = `streak-modal-title-${kind}`;
+  const numberColor = kind === 'day' ? 'text-amber-600' : 'text-violet-600';
+  const teaserBg = kind === 'day' ? 'bg-amber-100 text-amber-900' : 'bg-violet-100 text-violet-900';
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="streak-modal-title"
+      aria-labelledby={labelId}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
       onClick={onClose}
     >
@@ -94,27 +145,27 @@ export function StreakModal({ streak, open, onClose }: Props) {
           <DotLottieReact src={celebratingUrl} loop autoplay />
         </div>
 
-        {/* Streak number with animated fire */}
+        {/* Streak number with icon (fire Lottie for day, 🎯 emoji for pronunciation) */}
         <div className="flex items-center justify-center gap-2 mb-3">
-          <div className="w-16 h-16 sm:w-20 sm:h-20">
-            <DotLottieReact src={streakFireUrl} loop autoplay />
-          </div>
-          <span className="text-6xl sm:text-7xl font-black text-amber-600">{streak}</span>
+          {kind === 'day' ? (
+            <div className="w-16 h-16 sm:w-20 sm:h-20">
+              <DotLottieReact src={streakFireUrl} loop autoplay />
+            </div>
+          ) : (
+            <span className="text-5xl sm:text-6xl">🎯</span>
+          )}
+          <span className={`text-6xl sm:text-7xl font-black ${numberColor}`}>{streak}</span>
         </div>
 
-        <h2 id="streak-modal-title" className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">
+        <h2 id={labelId} className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">
           {title}
         </h2>
-        <p className="text-base sm:text-lg text-slate-600 mb-4 px-2">
-          {body}
-        </p>
+        <p className="text-base sm:text-lg text-slate-600 mb-4 px-2">{body}</p>
 
-        {next !== null && remaining !== null && (
-          <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-900 font-bold rounded-full px-4 py-2 text-sm sm:text-base mb-5">
+        {next !== null && (
+          <div className={`inline-flex items-center gap-2 ${teaserBg} font-bold rounded-full px-4 py-2 text-sm sm:text-base mb-5`}>
             <span>🌟</span>
-            <span>
-              {remaining === 1 ? '1 more day' : `${remaining} more days`} to reach {next}!
-            </span>
+            <span>{teaserText(streak, next, kind)}</span>
           </div>
         )}
 
