@@ -6,6 +6,8 @@ import { useStreak } from './useStreak';
 import { CategoryStrip } from './CategoryStrip';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import streakFireUrl from './assets/streak-fire.json?url';
 
 type LangTheme = {
   label: string;
@@ -210,7 +212,9 @@ const MultilingualFlashcards = () => {
             className="flex items-center gap-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
             aria-label="Show streak details"
           >
-            <span className="text-base sm:text-lg">🔥</span>
+            <span className="inline-block w-6 h-6 sm:w-7 sm:h-7 -my-1">
+              <DotLottieReact src={streakFireUrl} loop autoplay />
+            </span>
             {streak > 0 ? (
               <>
                 <span>{streak}</span>
