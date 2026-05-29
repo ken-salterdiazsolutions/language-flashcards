@@ -176,9 +176,11 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
     <div ref={containerRef} className="absolute inset-x-0 -bottom-8 sm:-bottom-12 h-32 sm:h-40 pointer-events-none z-10 overflow-x-clip">
       <div
         ref={wrapperRef}
-        className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 ${isPlaying ? 'animate-mascot-talk' : ''}`}
+        onClick={() => requestMood('wave')}
+        className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 pointer-events-auto cursor-pointer active:scale-95 transition-transform ${isPlaying ? 'animate-mascot-talk' : ''}`}
         style={{ left: `${xRef.current}px` }}
-        aria-hidden="true"
+        role="button"
+        aria-label="Wave at the mascot"
       >
         <DotLottieReact
           src={SOURCES[mood]}
