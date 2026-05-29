@@ -140,22 +140,26 @@ export function StreakModal({ kind, streak, open, onClose }: Props) {
           ✕
         </button>
 
-        {/* Mascot celebrating */}
-        <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-2">
-          <DotLottieReact src={celebratingUrl} loop autoplay />
-        </div>
-
-        {/* Streak number with icon (fire Lottie for day, 🎯 emoji for pronunciation) */}
-        <div className="flex items-center justify-center gap-2 mb-3">
-          {kind === 'day' ? (
-            <div className="w-16 h-16 sm:w-20 sm:h-20">
-              <DotLottieReact src={streakFireUrl} loop autoplay />
+        {/* Mascot celebrating + streak number only shown when streak > 0.
+            At zero, the headline copy carries the "let's get started" tone
+            and a celebrating mascot + a big 0 feels off. */}
+        {streak > 0 && (
+          <>
+            <div className="w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-2">
+              <DotLottieReact src={celebratingUrl} loop autoplay />
             </div>
-          ) : (
-            <span className="text-5xl sm:text-6xl">🎯</span>
-          )}
-          <span className={`text-6xl sm:text-7xl font-black ${numberColor}`}>{streak}</span>
-        </div>
+            <div className="flex items-center justify-center gap-2 mb-3">
+              {kind === 'day' ? (
+                <div className="w-16 h-16 sm:w-20 sm:h-20">
+                  <DotLottieReact src={streakFireUrl} loop autoplay />
+                </div>
+              ) : (
+                <span className="text-5xl sm:text-6xl">🎯</span>
+              )}
+              <span className={`text-6xl sm:text-7xl font-black ${numberColor}`}>{streak}</span>
+            </div>
+          </>
+        )}
 
         <h2 id={labelId} className="text-2xl sm:text-3xl font-extrabold text-slate-800 mb-2">
           {title}
