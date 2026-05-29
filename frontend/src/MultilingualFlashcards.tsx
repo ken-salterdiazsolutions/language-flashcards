@@ -62,6 +62,19 @@ const MultilingualFlashcards = () => {
   const [navCount, setNavCount] = useState(0);
   const { streak, recordVisit } = useStreak();
 
+  // Match the card flip animation duration. If the user changes language or
+  // category while the card is flipped to the back, flip it back to the
+  // English side first so they don't get a sneak peek at the new answer.
+  const FLIP_DURATION_MS = 700;
+  const afterFlipBack = (fn: () => void) => {
+    if (showAnswer) {
+      resetCardState();
+      setTimeout(fn, FLIP_DURATION_MS);
+    } else {
+      fn();
+    }
+  };
+
   const filtered = selectedCategory === 'all' ? flashcards : flashcards.filter(c => c.cat === selectedCategory);
   const card = filtered[currentCard] || filtered[0];
   const theme = LANG_THEME[selectedLanguage];
@@ -140,7 +153,7 @@ const MultilingualFlashcards = () => {
             return (
               <button
                 key={lang}
-                onClick={() => { setSelectedLanguage(lang); resetCardState(); }}
+                onClick={() => afterFlipBack(() => setSelectedLanguage(lang))}
                 className={`rounded-2xl px-2 py-3 font-bold transition-all ${
                   active
                     ? `bg-white text-slate-800 ring-4 ${t.ring} shadow-md scale-[1.02]`
@@ -158,7 +171,7 @@ const MultilingualFlashcards = () => {
         <CategoryStrip
           categories={categories}
           selected={selectedCategory}
-          onSelect={(cat) => { setSelectedCategory(cat); setCurrentCard(0); resetCardState(); }}
+          onSelect={(cat) => afterFlipBack(() => { setSelectedCategory(cat); setCurrentCard(0); })}
         />
 
         {/* The card — full 3D flip */}
