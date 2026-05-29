@@ -44,7 +44,7 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
   };
 
   return (
-    <div className="relative mb-6 sm:mb-8">
+    <div className="relative mb-6 sm:mb-8 md:px-12">
       {/* Left arrow (desktop hover only, shown when scrollable left) */}
       {canScrollLeft && (
         <button
