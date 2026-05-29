@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Volume2, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Megaphone, Sparkles } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './firebase';
 import { useAudioRecorder } from './useAudioRecorder';
 import { resampleToWav48k } from './audioConvert';
+import { judgePronunciation, type Judgment } from './judgePronunciation';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
 import { CategoryStrip } from './CategoryStrip';
@@ -93,6 +94,75 @@ const LANG_THEME: Record<Lang, LangTheme> = {
   },
 };
 
+// Result panel shown after a pronunciation attempt is judged.
+// Style varies by verdict tier: perfect (green), close (amber),
+// wrong (rose), unclear (slate).
+// For `wrong`: shows Try again + Skip (Skip is the streak-reset trigger).
+// For `unclear`: shows only Try again (unclear doesn't count as an attempt).
+// For `perfect` / `close`: just dismiss.
+function PronunciationResult({
+  judgment,
+  onDismiss,
+  onRetry,
+  onSkip,
+}: {
+  judgment: Judgment;
+  onDismiss: () => void;
+  onRetry: () => void;
+  onSkip: () => void;
+}) {
+  const { verdict, normalizedTranscript } = judgment;
+  const config = {
+    perfect: { bg: 'bg-emerald-100', text: 'text-emerald-800', emoji: '🎉', title: 'Perfect!', body: 'You nailed it!' },
+    close:   { bg: 'bg-amber-100',   text: 'text-amber-800',   emoji: '🌟', title: 'Almost!',  body: "That counts! You're getting it." },
+    wrong:   { bg: 'bg-rose-100',    text: 'text-rose-800',    emoji: '🤔', title: 'Not quite',body: 'Listen again and give it another go.' },
+    unclear: { bg: 'bg-slate-100',   text: 'text-slate-700',   emoji: '👂', title: "Didn't catch that", body: 'Try saying it a little louder.' },
+  }[verdict];
+  const showRetry = verdict === 'wrong' || verdict === 'unclear';
+  const showSkip = verdict === 'wrong';
+  return (
+    <div className={`relative rounded-3xl p-5 sm:p-6 mb-6 shadow-md ${config.bg}`}>
+      <button
+        onClick={onDismiss}
+        aria-label="Dismiss result"
+        className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/60 hover:bg-white text-slate-600 font-bold flex items-center justify-center"
+      >
+        ✕
+      </button>
+      <div className="text-center">
+        <div className="text-4xl sm:text-5xl mb-2">{config.emoji}</div>
+        <h3 className={`text-xl sm:text-2xl font-extrabold mb-1 ${config.text}`}>{config.title}</h3>
+        <p className={`text-sm sm:text-base ${config.text} opacity-80`}>{config.body}</p>
+        {normalizedTranscript && verdict !== 'perfect' && (
+          <p className="text-xs sm:text-sm text-slate-600 mt-3 italic">
+            We heard: <span className="font-bold not-italic">"{normalizedTranscript}"</span>
+          </p>
+        )}
+        {(showRetry || showSkip) && (
+          <div className="flex flex-col sm:flex-row gap-2 mt-4 justify-center">
+            {showRetry && (
+              <button
+                onClick={onRetry}
+                className="rounded-2xl px-5 py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold text-sm sm:text-base shadow-[0_4px_0_0_rgb(157_23_77)] active:translate-y-1 active:shadow-none transition-all"
+              >
+                🎤 Try again
+              </button>
+            )}
+            {showSkip && (
+              <button
+                onClick={onSkip}
+                className="rounded-2xl px-5 py-2.5 bg-slate-400 hover:bg-slate-500 text-white font-bold text-sm sm:text-base shadow-[0_4px_0_0_rgb(71_85_105)] active:translate-y-1 active:shadow-none transition-all"
+              >
+                ⏭️ Skip
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -123,7 +193,14 @@ const MultilingualFlashcards = () => {
   const [navCount, setNavCount] = useState(0);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const { streak, recordVisit } = useStreak();
-  // Phase 2 test scaffolding for pronunciation feature — temporary
+
+  // Pronunciation feature state.
+  // pronStatus drives the mic button UI; pronJudgment holds the most recent
+  // result while the result panel is shown. Both are cleared when the user
+  // navigates, flips the card, or changes language/category.
+  type PronStatus = 'idle' | 'recording' | 'uploading';
+  const [pronStatus, setPronStatus] = useState<PronStatus>('idle');
+  const [pronJudgment, setPronJudgment] = useState<Judgment | null>(null);
   const audioRecorder = useAudioRecorder();
 
   // Language strip scroll state — mirrors CategoryStrip's behavior so the
@@ -172,6 +249,10 @@ const MultilingualFlashcards = () => {
     setShowAnswer(false);
     setShowBreakdown(false);
     setShowKanji(false);
+    setPronJudgment(null);
+    // Don't clobber pronStatus if a recording is in flight — let the user
+    // stop deliberately. But once they leave the answer side it doesn't
+    // matter; the mic button only renders while showAnswer is true.
   };
 
   const canShowKanji = selectedLanguage === 'japanese' && !!card.kanji;
@@ -217,19 +298,20 @@ const MultilingualFlashcards = () => {
     }
   };
 
-  // Phase 2 test only — verifies the audio-recording → STT pipeline end-to-end.
-  // Removed/replaced in Phase 3. Logs results to the dev console.
-  const handleTestTranscribe = async () => {
+  const handleRecordPronunciation = async () => {
     if (audioRecorder.isRecording) {
       audioRecorder.stop();
       return;
     }
+    if (pronStatus === 'uploading') return;
     const target = card[selectedLanguage] ?? '';
-    console.log('[TEST] recording for:', { target, lang: selectedLanguage });
-    audioRecorder.start(async ({ blob, mimeType }) => {
+    setPronJudgment(null);
+    setPronStatus('recording');
+    audioRecorder.start(async ({ blob }) => {
+      setPronStatus('uploading');
       try {
-        // Browsers often record at 44.1kHz WebM/Opus, which Google STT rejects.
-        // Convert client-side to canonical 48kHz mono LINEAR16 WAV first.
+        // Browsers record at varying rates; resample to 48kHz mono WAV so
+        // Google STT consistently accepts the audio (see audioConvert.ts).
         const converted = await resampleToWav48k(blob);
         const audioBase64 = await blobToBase64(converted.blob);
         await ensureSignedIn();
@@ -238,16 +320,21 @@ const MultilingualFlashcards = () => {
           mimeType: converted.mimeType,
           lang: selectedLanguage,
         });
-        console.log('[TEST] result:', {
-          target,
-          transcript: data.transcript,
-          confidence: data.confidence,
-          originalMimeType: mimeType,
-          originalSize: blob.size,
-          convertedSize: converted.blob.size,
-        });
+        const judgment = judgePronunciation(target, data.transcript, data.confidence, selectedLanguage);
+        setPronJudgment(judgment);
       } catch (e) {
-        console.error('[TEST] transcribe failed:', e);
+        console.error('[pron] transcribe failed:', e);
+        // Treat backend failures as "unclear" so the user can retry without
+        // it counting against any streak.
+        setPronJudgment({
+          verdict: 'unclear',
+          similarity: 0,
+          confidence: 0,
+          normalizedTarget: target,
+          normalizedTranscript: '',
+        });
+      } finally {
+        setPronStatus('idle');
       }
     });
   };
@@ -447,9 +534,29 @@ const MultilingualFlashcards = () => {
                 </>
               ) : (
                 <>
-                  <Volume2 className="w-5 h-5" />
-                  Play sound
+                  <Megaphone className="w-5 h-5" />
+                  Hear it!
                 </>
+              )}
+            </button>
+            <button
+              onClick={handleRecordPronunciation}
+              disabled={pronStatus === 'uploading'}
+              className={`flex-1 rounded-2xl py-4 text-white font-extrabold text-base sm:text-lg active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 ${
+                pronStatus === 'recording'
+                  ? 'bg-red-500 hover:bg-red-600 shadow-[0_6px_0_0_rgb(153_27_27)] animate-pulse'
+                  : 'bg-pink-500 hover:bg-pink-600 shadow-[0_6px_0_0_rgb(157_23_77)] disabled:opacity-70 disabled:cursor-wait'
+              }`}
+            >
+              {pronStatus === 'recording' ? (
+                <>🎤 Listening… (click to stop)</>
+              ) : pronStatus === 'uploading' ? (
+                <>
+                  <span className="inline-block w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
+                  Checking…
+                </>
+              ) : (
+                <>🎤 Say it!</>
               )}
             </button>
             {canShowBreakdown && (
@@ -457,31 +564,26 @@ const MultilingualFlashcards = () => {
                 onClick={() => setShowBreakdown(!showBreakdown)}
                 className="flex-1 rounded-2xl py-4 bg-violet-500 hover:bg-violet-600 text-white font-extrabold text-base sm:text-lg shadow-[0_6px_0_0_rgb(91_33_182)] active:translate-y-1 active:shadow-none transition-all"
               >
-                {showBreakdown ? '📚 Hide breakdown' : '🔍 Show breakdown'}
+                {showBreakdown ? '📚 Hide it!' : '🔍 Break it down!'}
               </button>
             )}
           </div>
         )}
 
-        {/* Phase 2 TEMP — pronunciation test button. Replaced in Phase 3. */}
-        {showAnswer && (
-          <div className="mb-6">
-            <button
-              onClick={handleTestTranscribe}
-              className={`w-full rounded-2xl py-3 font-bold text-sm transition-all ${
-                audioRecorder.isRecording
-                  ? 'bg-red-500 text-white animate-pulse'
-                  : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
-              }`}
-            >
-              {audioRecorder.isRecording
-                ? '🎤 Listening… (click to stop, or stay silent)'
-                : '🧪 TEST: record pronunciation → console'}
-            </button>
-            {audioRecorder.error && (
-              <p className="text-xs text-red-600 mt-1 text-center">{audioRecorder.error}</p>
-            )}
-          </div>
+        {/* Pronunciation result panel */}
+        {showAnswer && pronJudgment && (
+          <PronunciationResult
+            judgment={pronJudgment}
+            onDismiss={() => setPronJudgment(null)}
+            onRetry={() => {
+              setPronJudgment(null);
+              handleRecordPronunciation();
+            }}
+            onSkip={() => {
+              // Phase 4 will reset the pronunciation streak here.
+              setPronJudgment(null);
+            }}
+          />
         )}
 
         {/* Breakdown panel */}
