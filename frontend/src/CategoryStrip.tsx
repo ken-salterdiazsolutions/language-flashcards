@@ -50,7 +50,7 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
         <button
           onClick={() => scrollBy(-200)}
           aria-label="Scroll categories left"
-          className="hidden md:[@media(hover:hover)]:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-white shadow-md text-slate-600 hover:bg-slate-50"
+          className="hidden md:[@media(hover:hover)]:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -59,7 +59,7 @@ export function CategoryStrip({ categories, selected, onSelect }: Props) {
         <button
           onClick={() => scrollBy(200)}
           aria-label="Scroll categories right"
-          className="hidden md:[@media(hover:hover)]:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-white shadow-md text-slate-600 hover:bg-slate-50"
+          className="hidden md:[@media(hover:hover)]:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
