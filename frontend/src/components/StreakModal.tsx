@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import celebratingUrl from './assets/mascot-celebrating.json?url';
-import streakFireUrl from './assets/streak-fire.json?url';
+import celebratingUrl from '../assets/mascot-celebrating.json?url';
+import streakFireUrl from '../assets/streak-fire.json?url';
 
 type Kind = 'day' | 'pronunciation';
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
-import type { Lang } from './models/data';
-import { AVATAR_OPTIONS, type Avatar, type Profile } from './models/profile';
+import type { Lang } from '../models/data';
+import { AVATAR_OPTIONS, type Avatar, type Profile } from '../models/profile';
 import { ProfileMascot } from './ProfileMascot';
-import { LANG_THEME } from './models/langTheme';
+import { LANG_THEME } from '../models/langTheme';
 
 /** Visual order of language tiles. Labels + colors come from LANG_THEME. */
 const LANG_ORDER: Lang[] = ['japanese', 'korean', 'mandarin', 'spanish', 'french', 'german'];

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import type { DotLottie } from '@lottiefiles/dotlottie-web';
 
-import standingUrl from './assets/mascot-standing.json?url';
-import wavingUrl from './assets/mascot-waving-hello.json?url';
-import celebratingUrl from './assets/mascot-celebrating.json?url';
-import walkingUrl from './assets/mascot-walking.json?url';
+import standingUrl from '../assets/mascot-standing.json?url';
+import wavingUrl from '../assets/mascot-waving-hello.json?url';
+import celebratingUrl from '../assets/mascot-celebrating.json?url';
+import walkingUrl from '../assets/mascot-walking.json?url';
 
 type Mood = 'idle' | 'wave' | 'celebrate' | 'walk';
 

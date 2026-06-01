@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import celebratingUrl from './assets/mascot-celebrating.json?url';
-import type { Tier } from './celebration';
+import celebratingUrl from '../assets/mascot-celebrating.json?url';
+import type { Tier } from '../services/celebration';
 
 type Props = {
   streak: number;

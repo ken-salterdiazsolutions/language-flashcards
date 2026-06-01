@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
-import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './firebase';
+import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './services/firebase';
 import { useAudioRecorder } from './hooks/useAudioRecorder';
-import { resampleToWav48k } from './audioConvert';
+import { resampleToWav48k } from './services/audioConvert';
 import { judgePronunciation, type Judgment } from './models/judgePronunciation';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './models/data';
 import { useStreak } from './hooks/useStreak';
 import { usePronunciationStreak } from './hooks/usePronunciationStreak';
-import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './celebration';
-import { CelebrationModal } from './CelebrationModal';
-import { CategoryStrip } from './CategoryStrip';
+import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './services/celebration';
+import { CelebrationModal } from './components/CelebrationModal';
+import { CategoryStrip } from './components/CategoryStrip';
 import { LANG_THEME } from './models/langTheme';
 import { useSwipe } from './hooks/useSwipe';
-import { Mascot } from './Mascot';
-import { StreakModal } from './StreakModal';
+import { Mascot } from './components/Mascot';
+import { StreakModal } from './components/StreakModal';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import streakFireUrl from './assets/streak-fire.json?url';
 

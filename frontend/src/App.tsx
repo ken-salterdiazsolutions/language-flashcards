@@ -1,5 +1,5 @@
 import MultilingualFlashcards from './MultilingualFlashcards';
-import { ProfilePicker } from './ProfilePicker';
+import { ProfilePicker } from './components/ProfilePicker';
 import { useProfile } from './hooks/useProfile';
 
 function App() {

@@ -1,5 +1,5 @@
 import confetti from 'canvas-confetti';
-import cheerUrl from './assets/cheer.mp3';
+import cheerUrl from '../assets/cheer.mp3';
 
 /**
  * Pronunciation streak celebration tiers. Increasing intensity at higher
