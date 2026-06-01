@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
-import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './services/firebase';
-import { useAudioRecorder } from './hooks/useAudioRecorder';
-import { resampleToWav48k } from './services/audioConvert';
-import { judgePronunciation, type Judgment } from './models/judgePronunciation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ensureSignedIn, synthesizeSpeech } from './services/firebase';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './models/data';
 import { useStreak } from './hooks/useStreak';
-import { usePronunciationStreak } from './hooks/usePronunciationStreak';
-import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './services/celebration';
-import { CelebrationModal } from './components/CelebrationModal';
 import { CategoryStrip } from './components/CategoryStrip';
 import { LANG_THEME } from './models/langTheme';
 import { useSwipe } from './hooks/useSwipe';
@@ -18,93 +12,6 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import streakFireUrl from './assets/streak-fire.json?url';
 
 // LANG_THEME extracted to ./langTheme.ts so the ProfilePicker can reuse it.
-
-// Result panel shown after a pronunciation attempt is judged.
-// Style varies by verdict tier: perfect (green), close (amber),
-// wrong (rose), unclear (slate).
-// For `wrong`: shows Try again + Skip (Skip is the streak-reset trigger).
-// For `unclear`: shows only Try again (unclear doesn't count as an attempt).
-// For `perfect` / `close`: just dismiss.
-function PronunciationResult({
-  judgment,
-  onDismiss,
-  onRetry,
-  onSkip,
-}: {
-  judgment: Judgment;
-  onDismiss: () => void;
-  onRetry: () => void;
-  onSkip: () => void;
-}) {
-  const { verdict, normalizedTranscript } = judgment;
-  const config = {
-    perfect: { bg: 'bg-emerald-100', text: 'text-emerald-800', emoji: '🎉', title: 'Perfect!', body: 'You nailed it!' },
-    close:   { bg: 'bg-amber-100',   text: 'text-amber-800',   emoji: '🌟', title: 'Almost!',  body: "That counts! You're getting it." },
-    wrong:   { bg: 'bg-rose-100',    text: 'text-rose-800',    emoji: '🤔', title: 'Not quite',body: 'Listen again and give it another go.' },
-    unclear: { bg: 'bg-slate-100',   text: 'text-slate-700',   emoji: '👂', title: "Didn't catch that", body: 'Try saying it a little louder.' },
-  }[verdict];
-  const showRetry = verdict === 'wrong' || verdict === 'unclear';
-  const showSkip = verdict === 'wrong';
-  return (
-    <div className={`relative rounded-3xl p-5 sm:p-6 mb-6 shadow-md ${config.bg}`}>
-      <button
-        onClick={onDismiss}
-        aria-label="Dismiss result"
-        className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/60 hover:bg-white text-slate-600 font-bold flex items-center justify-center"
-      >
-        ✕
-      </button>
-      <div className="text-center">
-        <div className="text-4xl sm:text-5xl mb-2">{config.emoji}</div>
-        <h3 className={`text-xl sm:text-2xl font-extrabold mb-1 ${config.text}`}>{config.title}</h3>
-        <p className={`text-sm sm:text-base ${config.text} opacity-80`}>{config.body}</p>
-        {normalizedTranscript && verdict !== 'perfect' && (
-          <p className="text-xs sm:text-sm text-slate-600 mt-3 italic">
-            We heard: <span className="font-bold not-italic">"{normalizedTranscript}"</span>
-          </p>
-        )}
-        {(showRetry || showSkip) && (
-          <div className="flex flex-col sm:flex-row gap-2 mt-4 justify-center">
-            {showRetry && (
-              <button
-                onClick={onRetry}
-                className="rounded-2xl px-5 py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-bold text-sm sm:text-base shadow-[0_4px_0_0_rgb(157_23_77)] active:translate-y-1 active:shadow-none transition-all"
-              >
-                🎤 Try again
-              </button>
-            )}
-            {showSkip && (
-              <button
-                onClick={onSkip}
-                className="rounded-2xl px-5 py-2.5 bg-slate-400 hover:bg-slate-500 text-white font-bold text-sm sm:text-base shadow-[0_4px_0_0_rgb(71_85_105)] active:translate-y-1 active:shadow-none transition-all"
-              >
-                ⏭️ Skip
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function blobToBase64(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result !== 'string') {
-        reject(new Error('FileReader returned non-string'));
-        return;
-      }
-      // result is "data:<mime>;base64,<actual base64>" — strip the prefix
-      const comma = result.indexOf(',');
-      resolve(comma >= 0 ? result.slice(comma + 1) : result);
-    };
-    reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
-    reader.readAsDataURL(blob);
-  });
-}
 
 type Props = {
   activeProfile: import('./models/profile').Profile;
@@ -124,24 +31,7 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
   const [revealCount, setRevealCount] = useState(0);
   const [navCount, setNavCount] = useState(0);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
-  const [pronStreakModalOpen, setPronStreakModalOpen] = useState(false);
-  // Tracks an active celebration triggered by a pronunciation streak milestone.
-  // Non-null = celebration modal showing; null = no celebration (or only
-  // subtle confetti tier, which doesn't use this state).
-  const [celebrationTier, setCelebrationTier] = useState<Tier | null>(null);
-  const [chipPulse, setChipPulse] = useState(false);
   const { streak, recordVisit } = useStreak();
-  const pronunciationStreakState = usePronunciationStreak();
-  const prevPronStreakRef = useRef<number>(pronunciationStreakState.streak);
-
-  // Pronunciation feature state.
-  // pronStatus drives the mic button UI; pronJudgment holds the most recent
-  // result while the result panel is shown. Both are cleared when the user
-  // navigates, flips the card, or changes language/category.
-  type PronStatus = 'idle' | 'recording' | 'uploading';
-  const [pronStatus, setPronStatus] = useState<PronStatus>('idle');
-  const [pronJudgment, setPronJudgment] = useState<Judgment | null>(null);
-  const audioRecorder = useAudioRecorder();
 
   // Language strip scroll state — mirrors CategoryStrip's behavior so the
   // language picker can show prev/next chevron arrows on desktop.
@@ -168,24 +58,6 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
     langScrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
-  // Pronunciation streak milestone watcher. When the streak transitions into
-  // a milestone value (1, 5, 10, 15, 20, 25, 50, 100), fire the celebration:
-  // confetti + cheer sound + chip pulse, plus a modal for higher tiers.
-  useEffect(() => {
-    const prev = prevPronStreakRef.current;
-    const curr = pronunciationStreakState.streak;
-    prevPronStreakRef.current = curr;
-    if (curr <= prev) return; // resets and no-ops don't trigger celebrations
-    const tier = tierForStreak(curr);
-    if (!tier) return;
-    fireConfetti(tier);
-    playCheer(tier);
-    setChipPulse(true);
-    const pulseTimer = window.setTimeout(() => setChipPulse(false), 800);
-    if (tierHasModal(tier)) setCelebrationTier(tier);
-    return () => clearTimeout(pulseTimer);
-  }, [pronunciationStreakState.streak]);
-
   // Match the card flip animation duration. If the user changes language or
   // category while the card is flipped to the back, flip it back to the
   // English side first so they don't get a sneak peek at the new answer.
@@ -207,10 +79,6 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
     setShowAnswer(false);
     setShowBreakdown(false);
     setShowKanji(false);
-    setPronJudgment(null);
-    // Don't clobber pronStatus if a recording is in flight — let the user
-    // stop deliberately. But once they leave the answer side it doesn't
-    // matter; the mic button only renders while showAnswer is true.
   };
 
   const canShowKanji = selectedLanguage === 'japanese' && !!card.kanji;
@@ -283,52 +151,6 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
     }
   };
 
-  const handleRecordPronunciation = async () => {
-    if (audioRecorder.isRecording) {
-      audioRecorder.stop();
-      return;
-    }
-    if (pronStatus === 'uploading') return;
-    const target = card[selectedLanguage] ?? '';
-    setPronJudgment(null);
-    setPronStatus('recording');
-    audioRecorder.start(async ({ blob }) => {
-      setPronStatus('uploading');
-      try {
-        // Browsers record at varying rates; resample to 48kHz mono WAV so
-        // Google STT consistently accepts the audio (see audioConvert.ts).
-        const converted = await resampleToWav48k(blob);
-        const audioBase64 = await blobToBase64(converted.blob);
-        await ensureSignedIn();
-        const { data } = await transcribeSpeech({
-          audioBase64,
-          mimeType: converted.mimeType,
-          lang: selectedLanguage,
-        });
-        const judgment = judgePronunciation(target, data.transcript, data.confidence, selectedLanguage);
-        setPronJudgment(judgment);
-        if (judgment.verdict === 'perfect' || judgment.verdict === 'close') {
-          pronunciationStreakState.recordCorrect();
-        }
-        // wrong/unclear: no streak change yet. The user can retry; the skip
-        // button on the wrong-result panel is the explicit reset trigger.
-      } catch (e) {
-        console.error('[pron] transcribe failed:', e);
-        // Treat backend failures as "unclear" so the user can retry without
-        // it counting against any streak.
-        setPronJudgment({
-          verdict: 'unclear',
-          similarity: 0,
-          confidence: 0,
-          normalizedTarget: target,
-          normalizedTranscript: '',
-        });
-      } finally {
-        setPronStatus('idle');
-      }
-    });
-  };
-
   return (
     <div className="min-h-screen w-full bg-linear-to-br from-orange-100 via-pink-100 to-violet-200 font-[Nunito,system-ui,sans-serif]">
       <div className="max-w-3xl mx-auto px-4 py-6 sm:py-10">
@@ -363,21 +185,6 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
                 </>
               ) : (
                 <span className="font-semibold">Day streak!</span>
-              )}
-            </button>
-            <button
-              onClick={() => setPronStreakModalOpen(true)}
-              className={`flex items-center gap-1.5 bg-violet-200 hover:bg-violet-300 text-violet-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-all ${chipPulse ? 'animate-streak-pulse' : ''}`}
-              aria-label="Show pronunciation streak details"
-            >
-              <span className="text-base sm:text-lg">🎯</span>
-              {pronunciationStreakState.streak > 0 ? (
-                <>
-                  <span>{pronunciationStreakState.streak}</span>
-                  <span className="hidden sm:inline text-violet-800/80 font-semibold">in a row</span>
-                </>
-              ) : (
-                <span className="font-semibold">Say streak!</span>
               )}
             </button>
           </div>
@@ -553,30 +360,7 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
                   Loading…
                 </>
               ) : (
-                <>
-                  <Megaphone className="w-5 h-5" />
-                  Hear it!
-                </>
-              )}
-            </button>
-            <button
-              onClick={handleRecordPronunciation}
-              disabled={pronStatus === 'uploading'}
-              className={`flex-1 rounded-2xl py-4 text-white font-extrabold text-base sm:text-lg active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 ${
-                pronStatus === 'recording'
-                  ? 'bg-red-500 hover:bg-red-600 shadow-[0_6px_0_0_rgb(153_27_27)] animate-pulse'
-                  : 'bg-pink-500 hover:bg-pink-600 shadow-[0_6px_0_0_rgb(157_23_77)] disabled:opacity-70 disabled:cursor-wait'
-              }`}
-            >
-              {pronStatus === 'recording' ? (
-                <>🎤 Listening… (click to stop)</>
-              ) : pronStatus === 'uploading' ? (
-                <>
-                  <span className="inline-block w-5 h-5 border-[3px] border-white border-t-transparent rounded-full animate-spin" />
-                  Checking…
-                </>
-              ) : (
-                <>🎤 Say it!</>
+                <>🔊 Hear it!</>
               )}
             </button>
             {canShowBreakdown && (
@@ -588,22 +372,6 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
               </button>
             )}
           </div>
-        )}
-
-        {/* Pronunciation result panel */}
-        {showAnswer && pronJudgment && (
-          <PronunciationResult
-            judgment={pronJudgment}
-            onDismiss={() => setPronJudgment(null)}
-            onRetry={() => {
-              setPronJudgment(null);
-              handleRecordPronunciation();
-            }}
-            onSkip={() => {
-              pronunciationStreakState.recordSkip();
-              setPronJudgment(null);
-            }}
-          />
         )}
 
         {/* Breakdown panel */}
@@ -652,25 +420,10 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
       </div>
 
       <StreakModal
-        kind="day"
         streak={streak}
         open={streakModalOpen}
         onClose={() => setStreakModalOpen(false)}
       />
-      <StreakModal
-        kind="pronunciation"
-        streak={pronunciationStreakState.streak}
-        open={pronStreakModalOpen}
-        onClose={() => setPronStreakModalOpen(false)}
-      />
-      {celebrationTier !== null && (
-        <CelebrationModal
-          streak={pronunciationStreakState.streak}
-          tier={celebrationTier}
-          open={true}
-          onClose={() => setCelebrationTier(null)}
-        />
-      )}
     </div>
   );
 };
