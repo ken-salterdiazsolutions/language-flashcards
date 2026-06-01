@@ -10,93 +10,14 @@ import { usePronunciationStreak } from './usePronunciationStreak';
 import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './celebration';
 import { CelebrationModal } from './CelebrationModal';
 import { CategoryStrip } from './CategoryStrip';
+import { LANG_THEME } from './langTheme';
 import { useSwipe } from './useSwipe';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import streakFireUrl from './assets/streak-fire.json?url';
 
-type LangTheme = {
-  label: string;
-  short: string;
-  stripe: string;
-  chip: string;
-  chipText: string;
-  ring: string;
-  buttonBg: string;
-  buttonShadow: string;
-  /** Tailwind arbitrary box-shadow for the active language pill's glow effect */
-  glow: string;
-};
-
-const LANG_THEME: Record<Lang, LangTheme> = {
-  japanese: {
-    label: 'Japanese',
-    short: '日本語',
-    stripe: 'bg-rose-400',
-    chip: 'bg-rose-100',
-    chipText: 'text-rose-700',
-    ring: 'ring-rose-300',
-    buttonBg: 'bg-rose-500 hover:bg-rose-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(159_18_57)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(251,113,133,0.55)]',
-  },
-  korean: {
-    label: 'Korean',
-    short: '한국어',
-    stripe: 'bg-sky-400',
-    chip: 'bg-sky-100',
-    chipText: 'text-sky-700',
-    ring: 'ring-sky-300',
-    buttonBg: 'bg-sky-500 hover:bg-sky-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(7_89_133)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(56,189,248,0.55)]',
-  },
-  mandarin: {
-    label: 'Mandarin',
-    short: '中文',
-    stripe: 'bg-amber-400',
-    chip: 'bg-amber-100',
-    chipText: 'text-amber-800',
-    ring: 'ring-amber-300',
-    buttonBg: 'bg-amber-500 hover:bg-amber-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(146_64_14)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(251,191,36,0.55)]',
-  },
-  spanish: {
-    label: 'Spanish',
-    short: 'Español',
-    stripe: 'bg-fuchsia-400',
-    chip: 'bg-fuchsia-100',
-    chipText: 'text-fuchsia-700',
-    ring: 'ring-fuchsia-300',
-    buttonBg: 'bg-fuchsia-500 hover:bg-fuchsia-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(162_28_175)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(232,121,249,0.55)]',
-  },
-  french: {
-    label: 'French',
-    short: 'Français',
-    stripe: 'bg-indigo-400',
-    chip: 'bg-indigo-100',
-    chipText: 'text-indigo-700',
-    ring: 'ring-indigo-300',
-    buttonBg: 'bg-indigo-500 hover:bg-indigo-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(55_48_163)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(129,140,248,0.55)]',
-  },
-  german: {
-    label: 'German',
-    short: 'Deutsch',
-    stripe: 'bg-emerald-400',
-    chip: 'bg-emerald-100',
-    chipText: 'text-emerald-700',
-    ring: 'ring-emerald-300',
-    buttonBg: 'bg-emerald-500 hover:bg-emerald-600',
-    buttonShadow: 'shadow-[0_6px_0_0_rgb(6_95_70)]',
-    glow: 'shadow-[0_0_12px_2px_rgba(52,211,153,0.55)]',
-  },
-};
+// LANG_THEME extracted to ./langTheme.ts so the ProfilePicker can reuse it.
 
 // Result panel shown after a pronunciation attempt is judged.
 // Style varies by verdict tier: perfect (green), close (amber),

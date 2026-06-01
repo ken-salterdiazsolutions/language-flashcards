@@ -3,17 +3,10 @@ import { Sparkles } from 'lucide-react';
 import type { Lang } from './data';
 import { AVATAR_OPTIONS, type Avatar, type Profile } from './profile';
 import { ProfileMascot } from './ProfileMascot';
+import { LANG_THEME } from './langTheme';
 
-/** Languages shown in the new-profile language picker. Order = visual order
- *  in the grid. Native-script labels mirror what's used in the main app. */
-const LANG_CHOICES: { value: Lang; label: string; short: string }[] = [
-  { value: 'japanese', label: 'Japanese', short: '日本語' },
-  { value: 'korean',   label: 'Korean',   short: '한국어' },
-  { value: 'mandarin', label: 'Mandarin', short: '中文' },
-  { value: 'spanish',  label: 'Spanish',  short: 'Español' },
-  { value: 'french',   label: 'French',   short: 'Français' },
-  { value: 'german',   label: 'German',   short: 'Deutsch' },
-];
+/** Visual order of language tiles. Labels + colors come from LANG_THEME. */
+const LANG_ORDER: Lang[] = ['japanese', 'korean', 'mandarin', 'spanish', 'french', 'german'];
 
 type Step = 'list' | 'name' | 'avatar' | 'language';
 
@@ -242,16 +235,19 @@ function LanguageStep({ onBack, onSelect }: { onBack: () => void; onSelect: (lan
       <h2 className="text-xl sm:text-2xl font-extrabold text-slate-700 mb-1">Pick a language to start</h2>
       <p className="text-sm sm:text-base text-slate-500 mb-6">You can add more later.</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-        {LANG_CHOICES.map(l => (
-          <button
-            key={l.value}
-            onClick={() => onSelect(l.value)}
-            className="bg-white rounded-2xl px-3 py-4 shadow-md hover:shadow-lg active:scale-95 transition-all"
-          >
-            <div className="text-base sm:text-lg font-extrabold text-slate-800">{l.label}</div>
-            <div className="text-base sm:text-lg text-slate-600">{l.short}</div>
-          </button>
-        ))}
+        {LANG_ORDER.map(value => {
+          const t = LANG_THEME[value];
+          return (
+            <button
+              key={value}
+              onClick={() => onSelect(value)}
+              className={`${t.tileBg} ${t.tileBgHover} ${t.tileShadow} rounded-2xl px-3 py-5 text-white active:translate-y-1 active:shadow-none transition-all`}
+            >
+              <div className="text-base sm:text-lg font-extrabold">{t.label}</div>
+              <div className="text-base sm:text-lg opacity-90">{t.short}</div>
+            </button>
+          );
+        })}
       </div>
       <div className="flex gap-3 justify-center mt-6">
         <button onClick={onBack} className="rounded-2xl px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold">
