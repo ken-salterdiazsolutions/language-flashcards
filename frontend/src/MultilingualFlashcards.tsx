@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Megaphone, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './firebase';
 import { useAudioRecorder } from './useAudioRecorder';
 import { resampleToWav48k } from './audioConvert';
@@ -184,10 +184,17 @@ function blobToBase64(blob: Blob): Promise<string> {
   });
 }
 
-const MultilingualFlashcards = () => {
+type Props = {
+  activeProfile: import('./profile').Profile;
+  onSwitchProfile: () => void;
+  onChangeLanguage: (lang: Lang) => void;
+};
+
+const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLanguage }: Props) => {
   const [currentCard, setCurrentCard] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<Lang>('japanese');
+  const selectedLanguage = activeProfile.currentLanguage;
+  const setSelectedLanguage = onChangeLanguage;
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -379,12 +386,18 @@ const MultilingualFlashcards = () => {
 
         {/* Header */}
         <header className="flex items-center justify-between mb-6 sm:mb-8">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 sm:w-7 sm:h-7 text-violet-500" />
-            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight">
-              Flashcards
-            </h1>
-          </div>
+          <button
+            onClick={onSwitchProfile}
+            className="flex items-center gap-2 bg-white/60 hover:bg-white rounded-full pl-1 pr-3 py-1 shadow-sm active:scale-95 transition-transform"
+            aria-label={`Switch from profile ${activeProfile.name}`}
+          >
+            <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-violet-100 flex items-center justify-center text-2xl sm:text-3xl">
+              {activeProfile.avatar}
+            </span>
+            <span className="text-sm sm:text-base font-extrabold text-slate-800 max-w-[8ch] truncate">
+              {activeProfile.name}
+            </span>
+          </button>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setStreakModalOpen(true)}
