@@ -1,6 +1,6 @@
 import MultilingualFlashcards from './MultilingualFlashcards';
 import { ProfilePicker } from './ProfilePicker';
-import { useProfile } from './useProfile';
+import { useProfile } from './hooks/useProfile';
 
 function App() {
   const profile = useProfile();
