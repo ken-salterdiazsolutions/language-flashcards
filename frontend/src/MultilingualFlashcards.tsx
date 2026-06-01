@@ -3,14 +3,14 @@ import { ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech, transcribeSpeech } from './firebase';
 import { useAudioRecorder } from './useAudioRecorder';
 import { resampleToWav48k } from './audioConvert';
-import { judgePronunciation, type Judgment } from './judgePronunciation';
-import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
+import { judgePronunciation, type Judgment } from './models/judgePronunciation';
+import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './models/data';
 import { useStreak } from './useStreak';
 import { usePronunciationStreak } from './usePronunciationStreak';
 import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './celebration';
 import { CelebrationModal } from './CelebrationModal';
 import { CategoryStrip } from './CategoryStrip';
-import { LANG_THEME } from './langTheme';
+import { LANG_THEME } from './models/langTheme';
 import { useSwipe } from './useSwipe';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
@@ -107,7 +107,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 type Props = {
-  activeProfile: import('./profile').Profile;
+  activeProfile: import('./models/profile').Profile;
   onSwitchProfile: () => void;
   onChangeLanguage: (lang: Lang) => void;
 };

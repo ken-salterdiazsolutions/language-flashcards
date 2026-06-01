@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { CATEGORY_EMOJI } from './data';
+import { CATEGORY_EMOJI } from './models/data';
 
 type Props = {
   categories: string[];

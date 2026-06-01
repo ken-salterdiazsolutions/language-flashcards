@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Lang } from './data';
+import type { Lang } from './models/data';
 import {
   type Avatar,
   type Profile,
@@ -8,7 +8,7 @@ import {
   ensureLangProgress,
   loadProfileStore,
   saveProfileStore,
-} from './profile';
+} from './models/profile';
 
 /**
  * Manages the set of profiles + the active one. localStorage-backed.
