@@ -10,6 +10,7 @@ import { usePronunciationStreak } from './usePronunciationStreak';
 import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './celebration';
 import { CelebrationModal } from './CelebrationModal';
 import { CategoryStrip } from './CategoryStrip';
+import { useSwipe } from './useSwipe';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
@@ -318,6 +319,33 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
     setShowBreakdown(false);
   };
 
+  // Touch/pointer swipe handlers for the card. Swipe-left = next, swipe-right
+  // = prev (the card moves with the finger). Tap still flips because the hook
+  // only suppresses the click when a swipe committed.
+  const cardSwipe = useSwipe({ onLeft: nextCard, onRight: prevCard });
+
+  // Keyboard shortcuts: ← prev, → next, Space/Enter flip. Skipped when a
+  // text field has focus (e.g. future name input on a level screen).
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return;
+      // Don't intercept when a dialog (modal) is open — those handle their own keys.
+      if (document.querySelector('[role="dialog"]')) return;
+      if (e.key === 'ArrowLeft')      { e.preventDefault(); prevCard(); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); nextCard(); }
+      else if (e.key === ' ' || e.key === 'Enter') {
+        // Only when the focused element isn't a button itself, to avoid
+        // double-firing the focused button's own activation.
+        if (target && target.tagName === 'BUTTON') return;
+        e.preventDefault();
+        flipCard();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [nextCard, prevCard, flipCard]);
+
   const playSound = async (text: string, lang: Lang) => {
     if (isPlaying) return;
     setIsPlaying(true);
@@ -491,8 +519,15 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
         {/* The card — full 3D flip */}
         <div className="relative mb-6" style={{ perspective: '1600px' }}>
           <button
-            onClick={flipCard}
-            className="group relative w-full text-left"
+            {...cardSwipe.handlers}
+            onClick={() => {
+              // Skip the flip if the user just completed a swipe — pointerup
+              // fired both the swipe callback and a synthetic click on the
+              // button.
+              if (cardSwipe.wasSwipe()) return;
+              flipCard();
+            }}
+            className="group relative w-full text-left touch-pan-y"
             style={{ aspectRatio: '4 / 3', minHeight: '320px' }}
             aria-label={showAnswer ? 'Flip card back to English' : 'Flip card to reveal translation'}
           >

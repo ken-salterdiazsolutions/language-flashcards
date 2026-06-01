@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import type { Lang } from './data';
 import { AVATAR_OPTIONS, type Avatar, type Profile } from './profile';
+import { ProfileMascot } from './ProfileMascot';
 
 /** Languages shown in the new-profile language picker. Order = visual order
  *  in the grid. Native-script labels mirror what's used in the main app. */
@@ -28,17 +29,34 @@ export function ProfilePicker({ profiles, onSelect, onCreate, onDelete }: Props)
   const [step, setStep] = useState<Step>(profiles.length === 0 ? 'name' : 'list');
   const [draftName, setDraftName] = useState('');
   const [draftAvatar, setDraftAvatar] = useState<Avatar | null>(null);
+  // Increment to make the mascot celebrate once. The mascot mounts on first
+  // render with a wave, then idles. Each click of Next / picking an existing
+  // profile bumps this so the mascot plays a celebrate animation between
+  // steps.
+  const [celebrateKey, setCelebrateKey] = useState(0);
+  const cheer = () => setCelebrateKey(k => k + 1);
 
   const startNew = () => {
     setDraftName('');
     setDraftAvatar(null);
     setStep('name');
+    // Don't cheer here — entering the new-profile flow from the list isn't a
+    // "the kid made a choice" moment; it's a UI affordance.
   };
 
   const finishNew = (language: Lang) => {
     if (!draftName.trim() || !draftAvatar) return;
+    cheer();
     onCreate({ name: draftName.trim(), avatar: draftAvatar, language });
   };
+
+  const handleSelect = (id: string) => {
+    cheer();
+    onSelect(id);
+  };
+
+  const advanceFromName = () => { cheer(); setStep('avatar'); };
+  const advanceFromAvatar = () => { cheer(); setStep('language'); };
 
   return (
     <div className="min-h-screen w-full bg-linear-to-br from-orange-100 via-pink-100 to-violet-200 font-[Nunito,system-ui,sans-serif] flex flex-col items-center justify-start p-6 sm:p-10">
@@ -51,7 +69,7 @@ export function ProfilePicker({ profiles, onSelect, onCreate, onDelete }: Props)
         {step === 'list' && (
           <ListStep
             profiles={profiles}
-            onSelect={onSelect}
+            onSelect={handleSelect}
             onNew={startNew}
             onDelete={onDelete}
           />
@@ -62,7 +80,7 @@ export function ProfilePicker({ profiles, onSelect, onCreate, onDelete }: Props)
             name={draftName}
             setName={setDraftName}
             onBack={profiles.length > 0 ? () => setStep('list') : null}
-            onNext={() => setStep('avatar')}
+            onNext={advanceFromName}
           />
         )}
 
@@ -71,7 +89,7 @@ export function ProfilePicker({ profiles, onSelect, onCreate, onDelete }: Props)
             selected={draftAvatar}
             onSelect={setDraftAvatar}
             onBack={() => setStep('name')}
-            onNext={() => setStep('language')}
+            onNext={advanceFromAvatar}
           />
         )}
 
@@ -81,6 +99,10 @@ export function ProfilePicker({ profiles, onSelect, onCreate, onDelete }: Props)
             onSelect={finishNew}
           />
         )}
+
+        <div className="mt-8 sm:mt-10">
+          <ProfileMascot celebrateKey={celebrateKey} />
+        </div>
       </div>
     </div>
   );
