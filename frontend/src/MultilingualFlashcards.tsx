@@ -7,6 +7,8 @@ import { judgePronunciation, type Judgment } from './judgePronunciation';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './data';
 import { useStreak } from './useStreak';
 import { usePronunciationStreak } from './usePronunciationStreak';
+import { tierForStreak, tierHasModal, fireConfetti, playCheer, type Tier } from './celebration';
+import { CelebrationModal } from './CelebrationModal';
 import { CategoryStrip } from './CategoryStrip';
 import { Mascot } from './Mascot';
 import { StreakModal } from './StreakModal';
@@ -194,8 +196,14 @@ const MultilingualFlashcards = () => {
   const [navCount, setNavCount] = useState(0);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const [pronStreakModalOpen, setPronStreakModalOpen] = useState(false);
+  // Tracks an active celebration triggered by a pronunciation streak milestone.
+  // Non-null = celebration modal showing; null = no celebration (or only
+  // subtle confetti tier, which doesn't use this state).
+  const [celebrationTier, setCelebrationTier] = useState<Tier | null>(null);
+  const [chipPulse, setChipPulse] = useState(false);
   const { streak, recordVisit } = useStreak();
   const pronunciationStreakState = usePronunciationStreak();
+  const prevPronStreakRef = useRef<number>(pronunciationStreakState.streak);
 
   // Pronunciation feature state.
   // pronStatus drives the mic button UI; pronJudgment holds the most recent
@@ -230,6 +238,24 @@ const MultilingualFlashcards = () => {
   const scrollLangBy = (delta: number) => {
     langScrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
   };
+
+  // Pronunciation streak milestone watcher. When the streak transitions into
+  // a milestone value (1, 5, 10, 15, 20, 25, 50, 100), fire the celebration:
+  // confetti + cheer sound + chip pulse, plus a modal for higher tiers.
+  useEffect(() => {
+    const prev = prevPronStreakRef.current;
+    const curr = pronunciationStreakState.streak;
+    prevPronStreakRef.current = curr;
+    if (curr <= prev) return; // resets and no-ops don't trigger celebrations
+    const tier = tierForStreak(curr);
+    if (!tier) return;
+    fireConfetti(tier);
+    playCheer(tier);
+    setChipPulse(true);
+    const pulseTimer = window.setTimeout(() => setChipPulse(false), 800);
+    if (tierHasModal(tier)) setCelebrationTier(tier);
+    return () => clearTimeout(pulseTimer);
+  }, [pronunciationStreakState.streak]);
 
   // Match the card flip animation duration. If the user changes language or
   // category while the card is flipped to the back, flip it back to the
@@ -379,7 +405,7 @@ const MultilingualFlashcards = () => {
             </button>
             <button
               onClick={() => setPronStreakModalOpen(true)}
-              className="flex items-center gap-1.5 bg-violet-200 hover:bg-violet-300 text-violet-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
+              className={`flex items-center gap-1.5 bg-violet-200 hover:bg-violet-300 text-violet-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-all ${chipPulse ? 'animate-streak-pulse' : ''}`}
               aria-label="Show pronunciation streak details"
             >
               <span className="text-base sm:text-lg">🎯</span>
@@ -668,6 +694,14 @@ const MultilingualFlashcards = () => {
         open={pronStreakModalOpen}
         onClose={() => setPronStreakModalOpen(false)}
       />
+      {celebrationTier !== null && (
+        <CelebrationModal
+          streak={pronunciationStreakState.streak}
+          tier={celebrationTier}
+          open={true}
+          onClose={() => setCelebrationTier(null)}
+        />
+      )}
     </div>
   );
 };
