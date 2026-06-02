@@ -1,4 +1,4 @@
-export type Lang = 'japanese' | 'korean' | 'mandarin' | 'spanish' | 'french' | 'german';
+export type Lang = 'japanese' | 'korean' | 'mandarin' | 'spanish' | 'french' | 'german' | 'ukrainian' | 'italian' | 'hindi';
 
 export type BreakdownItem = { char: string; rom: string; meaning?: string };
 
@@ -15,6 +15,9 @@ export type Flashcard = {
   spanish?: string;
   french?: string;
   german?: string;
+  ukrainian?: string;
+  italian?: string;
+  hindi?: string;
   /**
    * For Asian languages: romanization (e.g. "konnichiwa").
    * For Latin-script languages: kid-readable phonetic pronunciation
@@ -194,7 +197,83 @@ export const flashcards: Flashcard[] = [
   { cat: "Transport", english: "Train", japanese: "でんしゃ", korean: "기차", mandarin: "火车", romanization: { japanese: "densha", korean: "gicha", mandarin: "huǒ chē" }, breakdown: { japanese: [{ char: "で", rom: "de" },{ char: "ん", rom: "n", meaning: "electric" },{ char: "し", rom: "sha" },{ char: "ゃ", rom: "" }], korean: [{ char: "기", rom: "gi", meaning: "machine" },{ char: "차", rom: "cha", meaning: "vehicle" }], mandarin: [{ char: "火", rom: "huǒ", meaning: "fire" },{ char: "车", rom: "chē", meaning: "vehicle" }] } },
   { cat: "Transport", english: "Plane", japanese: "ひこうき", korean: "비행기", mandarin: "飞机", romanization: { japanese: "hikouki", korean: "bihaenggi", mandarin: "fēi jī" }, breakdown: { japanese: [{ char: "ひ", rom: "hi" },{ char: "こ", rom: "ko" },{ char: "う", rom: "u" },{ char: "き", rom: "ki", meaning: "machine" }], korean: [{ char: "비", rom: "bi" },{ char: "행", rom: "haeng", meaning: "go" },{ char: "기", rom: "gi", meaning: "machine" }], mandarin: [{ char: "飞", rom: "fēi", meaning: "fly" },{ char: "机", rom: "jī", meaning: "machine" }] } },
   { cat: "Transport", english: "Bike", japanese: "じてんしゃ", korean: "자전거", mandarin: "自行车", romanization: { japanese: "jitensha", korean: "jajeongeo", mandarin: "zì xíng chē" }, breakdown: { japanese: [{ char: "じ", rom: "ji", meaning: "self" },{ char: "て", rom: "te" },{ char: "ん", rom: "n" },{ char: "し", rom: "sha" },{ char: "ゃ", rom: "" }], korean: [{ char: "자", rom: "ja", meaning: "self" },{ char: "전", rom: "jeon" },{ char: "거", rom: "geo" }], mandarin: [{ char: "自", rom: "zì", meaning: "self" },{ char: "行", rom: "xíng", meaning: "walk" },{ char: "车", rom: "chē", meaning: "vehicle" }] } },
-  { cat: "Transport", english: "Boat", japanese: "ふね", korean: "배", mandarin: "船", romanization: { japanese: "fune", korean: "bae", mandarin: "chuán" }, breakdown: { japanese: [{ char: "ふ", rom: "fu" },{ char: "ね", rom: "ne" }], korean: [{ char: "배", rom: "bae", meaning: "boat" }], mandarin: [{ char: "船", rom: "chuán", meaning: "boat" }] } }
+  { cat: "Transport", english: "Boat", japanese: "ふね", korean: "배", mandarin: "船", romanization: { japanese: "fune", korean: "bae", mandarin: "chuán" }, breakdown: { japanese: [{ char: "ふ", rom: "fu" },{ char: "ね", rom: "ne" }], korean: [{ char: "배", rom: "bae", meaning: "boat" }], mandarin: [{ char: "船", rom: "chuán", meaning: "boat" }] } },
+
+  // ── EXPANSION SET ─────────────────────────────────────────────────────
+  // 60 additional cards added 2026-06-01. Same shape as above.
+  // FOOD (15)
+  { cat: "Food", english: "Orange (fruit)", japanese: "オレンジ", korean: "오렌지", mandarin: "橙子", romanization: { japanese: "orenji", korean: "orenji", mandarin: "chéng zi" }, breakdown: { japanese: [{ char: "オ", rom: "o" },{ char: "レ", rom: "re" },{ char: "ン", rom: "n" },{ char: "ジ", rom: "ji" }], korean: [{ char: "오", rom: "o" },{ char: "렌", rom: "ren" },{ char: "지", rom: "ji" }], mandarin: [{ char: "橙", rom: "chéng", meaning: "orange" },{ char: "子", rom: "zi", meaning: "suffix" }] } },
+  { cat: "Food", english: "Strawberry", japanese: "いちご", korean: "딸기", mandarin: "草莓", romanization: { japanese: "ichigo", korean: "ttalgi", mandarin: "cǎo méi" }, breakdown: { japanese: [{ char: "い", rom: "i" },{ char: "ち", rom: "chi" },{ char: "ご", rom: "go" }], korean: [{ char: "딸", rom: "ttal" },{ char: "기", rom: "gi" }], mandarin: [{ char: "草", rom: "cǎo", meaning: "grass" },{ char: "莓", rom: "méi", meaning: "berry" }] } },
+  { cat: "Food", english: "Grape", japanese: "ぶどう", korean: "포도", mandarin: "葡萄", romanization: { japanese: "budou", korean: "podo", mandarin: "pú táo" }, breakdown: { japanese: [{ char: "ぶ", rom: "bu" },{ char: "ど", rom: "do" },{ char: "う", rom: "u" }], korean: [{ char: "포", rom: "po" },{ char: "도", rom: "do" }], mandarin: [{ char: "葡", rom: "pú" },{ char: "萄", rom: "táo" }] } },
+  { cat: "Food", english: "Watermelon", japanese: "すいか", korean: "수박", mandarin: "西瓜", romanization: { japanese: "suika", korean: "subak", mandarin: "xī guā" }, breakdown: { japanese: [{ char: "す", rom: "su" },{ char: "い", rom: "i" },{ char: "か", rom: "ka" }], korean: [{ char: "수", rom: "su", meaning: "water" },{ char: "박", rom: "bak", meaning: "gourd" }], mandarin: [{ char: "西", rom: "xī", meaning: "west" },{ char: "瓜", rom: "guā", meaning: "melon" }] } },
+  { cat: "Food", english: "Carrot", japanese: "にんじん", korean: "당근", mandarin: "胡萝卜", romanization: { japanese: "ninjin", korean: "danggeun", mandarin: "hú luó bo" }, breakdown: { japanese: [{ char: "に", rom: "ni" },{ char: "ん", rom: "n" },{ char: "じ", rom: "ji" },{ char: "ん", rom: "n" }], korean: [{ char: "당", rom: "dang" },{ char: "근", rom: "geun" }], mandarin: [{ char: "胡", rom: "hú" },{ char: "萝", rom: "luó" },{ char: "卜", rom: "bo" }] } },
+  { cat: "Food", english: "Potato", japanese: "じゃがいも", korean: "감자", mandarin: "土豆", romanization: { japanese: "jagaimo", korean: "gamja", mandarin: "tǔ dòu" }, breakdown: { japanese: [{ char: "じ", rom: "ja" },{ char: "ゃ", rom: "" },{ char: "が", rom: "ga" },{ char: "い", rom: "i" },{ char: "も", rom: "mo" }], korean: [{ char: "감", rom: "gam" },{ char: "자", rom: "ja" }], mandarin: [{ char: "土", rom: "tǔ", meaning: "earth" },{ char: "豆", rom: "dòu", meaning: "bean" }] } },
+  { cat: "Food", english: "Breakfast", japanese: "あさごはん", korean: "아침", mandarin: "早餐", romanization: { japanese: "asagohan", korean: "achim", mandarin: "zǎo cān" }, breakdown: { japanese: [{ char: "あ", rom: "a" },{ char: "さ", rom: "sa", meaning: "morning" },{ char: "ご", rom: "go", meaning: "polite" },{ char: "は", rom: "ha" },{ char: "ん", rom: "n", meaning: "meal" }], korean: [{ char: "아", rom: "a" },{ char: "침", rom: "chim", meaning: "morning" }], mandarin: [{ char: "早", rom: "zǎo", meaning: "early" },{ char: "餐", rom: "cān", meaning: "meal" }] } },
+  { cat: "Food", english: "Lunch", japanese: "ひるごはん", korean: "점심", mandarin: "午餐", romanization: { japanese: "hirugohan", korean: "jeomsim", mandarin: "wǔ cān" }, breakdown: { japanese: [{ char: "ひ", rom: "hi" },{ char: "る", rom: "ru", meaning: "noon" },{ char: "ご", rom: "go", meaning: "polite" },{ char: "は", rom: "ha" },{ char: "ん", rom: "n", meaning: "meal" }], korean: [{ char: "점", rom: "jeom" },{ char: "심", rom: "sim", meaning: "midday" }], mandarin: [{ char: "午", rom: "wǔ", meaning: "noon" },{ char: "餐", rom: "cān", meaning: "meal" }] } },
+  { cat: "Food", english: "Dinner", japanese: "ばんごはん", korean: "저녁", mandarin: "晚餐", romanization: { japanese: "bangohan", korean: "jeonyeok", mandarin: "wǎn cān" }, breakdown: { japanese: [{ char: "ば", rom: "ba" },{ char: "ん", rom: "n", meaning: "evening" },{ char: "ご", rom: "go", meaning: "polite" },{ char: "は", rom: "ha" },{ char: "ん", rom: "n", meaning: "meal" }], korean: [{ char: "저", rom: "jeo" },{ char: "녁", rom: "nyeok", meaning: "evening" }], mandarin: [{ char: "晚", rom: "wǎn", meaning: "evening" },{ char: "餐", rom: "cān", meaning: "meal" }] } },
+  { cat: "Food", english: "Juice", japanese: "ジュース", korean: "주스", mandarin: "果汁", romanization: { japanese: "juusu", korean: "juseu", mandarin: "guǒ zhī" }, breakdown: { japanese: [{ char: "ジ", rom: "ju" },{ char: "ュ", rom: "" },{ char: "ー", rom: "u" },{ char: "ス", rom: "su" }], korean: [{ char: "주", rom: "ju" },{ char: "스", rom: "seu" }], mandarin: [{ char: "果", rom: "guǒ", meaning: "fruit" },{ char: "汁", rom: "zhī", meaning: "juice" }] } },
+  { cat: "Food", english: "Ice cream", japanese: "アイスクリーム", korean: "아이스크림", mandarin: "冰淇淋", romanization: { japanese: "aisukuriimu", korean: "aiseukeurim", mandarin: "bīng qí lín" }, breakdown: { japanese: [{ char: "ア", rom: "a" },{ char: "イ", rom: "i" },{ char: "ス", rom: "su" },{ char: "ク", rom: "ku" },{ char: "リ", rom: "ri" },{ char: "ー", rom: "i" },{ char: "ム", rom: "mu" }], korean: [{ char: "아", rom: "a" },{ char: "이", rom: "i" },{ char: "스", rom: "seu" },{ char: "크", rom: "keu" },{ char: "림", rom: "rim" }], mandarin: [{ char: "冰", rom: "bīng", meaning: "ice" },{ char: "淇", rom: "qí" },{ char: "淋", rom: "lín" }] } },
+  { cat: "Food", english: "Cookie", japanese: "クッキー", korean: "쿠키", mandarin: "饼干", romanization: { japanese: "kukkii", korean: "kuki", mandarin: "bǐng gān" }, breakdown: { japanese: [{ char: "ク", rom: "ku" },{ char: "ッ", rom: "" },{ char: "キ", rom: "ki" },{ char: "ー", rom: "i" }], korean: [{ char: "쿠", rom: "ku" },{ char: "키", rom: "ki" }], mandarin: [{ char: "饼", rom: "bǐng", meaning: "cake" },{ char: "干", rom: "gān", meaning: "dry" }] } },
+  { cat: "Food", english: "Cheese", japanese: "チーズ", korean: "치즈", mandarin: "奶酪", romanization: { japanese: "chiizu", korean: "chijeu", mandarin: "nǎi lào" }, breakdown: { japanese: [{ char: "チ", rom: "chi" },{ char: "ー", rom: "i" },{ char: "ズ", rom: "zu" }], korean: [{ char: "치", rom: "chi" },{ char: "즈", rom: "jeu" }], mandarin: [{ char: "奶", rom: "nǎi", meaning: "milk" },{ char: "酪", rom: "lào", meaning: "cheese" }] } },
+  { cat: "Food", english: "Butter", japanese: "バター", korean: "버터", mandarin: "黄油", romanization: { japanese: "bataa", korean: "beoteo", mandarin: "huáng yóu" }, breakdown: { japanese: [{ char: "バ", rom: "ba" },{ char: "タ", rom: "ta" },{ char: "ー", rom: "a" }], korean: [{ char: "버", rom: "beo" },{ char: "터", rom: "teo" }], mandarin: [{ char: "黄", rom: "huáng", meaning: "yellow" },{ char: "油", rom: "yóu", meaning: "oil" }] } },
+  { cat: "Food", english: "Salt", japanese: "しお", korean: "소금", mandarin: "盐", romanization: { japanese: "shio", korean: "sogeum", mandarin: "yán" }, breakdown: { japanese: [{ char: "し", rom: "shi" },{ char: "お", rom: "o" }], korean: [{ char: "소", rom: "so" },{ char: "금", rom: "geum" }], mandarin: [{ char: "盐", rom: "yán", meaning: "salt" }] } },
+
+  // DAILY: clothes & routine (15)
+  { cat: "Daily", english: "Shirt", japanese: "シャツ", korean: "셔츠", mandarin: "衬衫", romanization: { japanese: "shatsu", korean: "syeocheu", mandarin: "chèn shān" }, breakdown: { japanese: [{ char: "シ", rom: "sha" },{ char: "ャ", rom: "" },{ char: "ツ", rom: "tsu" }], korean: [{ char: "셔", rom: "syeo" },{ char: "츠", rom: "cheu" }], mandarin: [{ char: "衬", rom: "chèn" },{ char: "衫", rom: "shān", meaning: "shirt" }] } },
+  { cat: "Daily", english: "Pants", japanese: "ズボン", korean: "바지", mandarin: "裤子", romanization: { japanese: "zubon", korean: "baji", mandarin: "kù zi" }, breakdown: { japanese: [{ char: "ズ", rom: "zu" },{ char: "ボ", rom: "bo" },{ char: "ン", rom: "n" }], korean: [{ char: "바", rom: "ba" },{ char: "지", rom: "ji" }], mandarin: [{ char: "裤", rom: "kù", meaning: "pants" },{ char: "子", rom: "zi", meaning: "suffix" }] } },
+  { cat: "Daily", english: "Shoes", japanese: "くつ", korean: "신발", mandarin: "鞋子", romanization: { japanese: "kutsu", korean: "sinbal", mandarin: "xié zi" }, breakdown: { japanese: [{ char: "く", rom: "ku" },{ char: "つ", rom: "tsu" }], korean: [{ char: "신", rom: "sin" },{ char: "발", rom: "bal" }], mandarin: [{ char: "鞋", rom: "xié", meaning: "shoe" },{ char: "子", rom: "zi", meaning: "suffix" }] } },
+  { cat: "Daily", english: "Socks", japanese: "くつした", korean: "양말", mandarin: "袜子", romanization: { japanese: "kutsushita", korean: "yangmal", mandarin: "wà zi" }, breakdown: { japanese: [{ char: "く", rom: "ku" },{ char: "つ", rom: "tsu", meaning: "shoe" },{ char: "し", rom: "shi" },{ char: "た", rom: "ta", meaning: "under" }], korean: [{ char: "양", rom: "yang" },{ char: "말", rom: "mal" }], mandarin: [{ char: "袜", rom: "wà", meaning: "sock" },{ char: "子", rom: "zi", meaning: "suffix" }] } },
+  { cat: "Daily", english: "Hat", japanese: "ぼうし", korean: "모자", mandarin: "帽子", romanization: { japanese: "boushi", korean: "moja", mandarin: "mào zi" }, breakdown: { japanese: [{ char: "ぼ", rom: "bo" },{ char: "う", rom: "u" },{ char: "し", rom: "shi" }], korean: [{ char: "모", rom: "mo" },{ char: "자", rom: "ja" }], mandarin: [{ char: "帽", rom: "mào", meaning: "hat" },{ char: "子", rom: "zi", meaning: "suffix" }] } },
+  { cat: "Daily", english: "Coat", japanese: "コート", korean: "외투", mandarin: "外套", romanization: { japanese: "kooto", korean: "oetu", mandarin: "wài tào" }, breakdown: { japanese: [{ char: "コ", rom: "ko" },{ char: "ー", rom: "o" },{ char: "ト", rom: "to" }], korean: [{ char: "외", rom: "oe", meaning: "outer" },{ char: "투", rom: "tu" }], mandarin: [{ char: "外", rom: "wài", meaning: "outside" },{ char: "套", rom: "tào", meaning: "cover" }] } },
+  { cat: "Daily", english: "Pajamas", japanese: "パジャマ", korean: "잠옷", mandarin: "睡衣", romanization: { japanese: "pajama", korean: "jamot", mandarin: "shuì yī" }, breakdown: { japanese: [{ char: "パ", rom: "pa" },{ char: "ジ", rom: "ja" },{ char: "ャ", rom: "" },{ char: "マ", rom: "ma" }], korean: [{ char: "잠", rom: "jam", meaning: "sleep" },{ char: "옷", rom: "ot", meaning: "clothes" }], mandarin: [{ char: "睡", rom: "shuì", meaning: "sleep" },{ char: "衣", rom: "yī", meaning: "clothes" }] } },
+  { cat: "Daily", english: "Brush teeth", japanese: "はをみがく", korean: "양치하다", mandarin: "刷牙", romanization: { japanese: "ha o migaku", korean: "yangchihada", mandarin: "shuā yá" }, breakdown: { japanese: [{ char: "は", rom: "ha", meaning: "tooth" },{ char: "を", rom: "o", meaning: "object" },{ char: "み", rom: "mi" },{ char: "が", rom: "ga" },{ char: "く", rom: "ku", meaning: "polish" }], korean: [{ char: "양", rom: "yang" },{ char: "치", rom: "chi", meaning: "tooth" },{ char: "하", rom: "ha", meaning: "do" },{ char: "다", rom: "da" }], mandarin: [{ char: "刷", rom: "shuā", meaning: "brush" },{ char: "牙", rom: "yá", meaning: "tooth" }] } },
+  { cat: "Daily", english: "Wash hands", japanese: "てをあらう", korean: "손을 씻다", mandarin: "洗手", romanization: { japanese: "te o arau", korean: "soneul ssitda", mandarin: "xǐ shǒu" }, breakdown: { japanese: [{ char: "て", rom: "te", meaning: "hand" },{ char: "を", rom: "o", meaning: "object" },{ char: "あ", rom: "a" },{ char: "ら", rom: "ra" },{ char: "う", rom: "u", meaning: "wash" }], korean: [{ char: "손", rom: "son", meaning: "hand" },{ char: "을", rom: "eul", meaning: "object" },{ char: "씻", rom: "ssit", meaning: "wash" },{ char: "다", rom: "da" }], mandarin: [{ char: "洗", rom: "xǐ", meaning: "wash" },{ char: "手", rom: "shǒu", meaning: "hand" }] } },
+  { cat: "Daily", english: "Take a bath", japanese: "おふろにはいる", korean: "목욕하다", mandarin: "洗澡", romanization: { japanese: "ofuro ni hairu", korean: "mogyokhada", mandarin: "xǐ zǎo" }, breakdown: { japanese: [{ char: "お", rom: "o", meaning: "polite" },{ char: "ふ", rom: "fu" },{ char: "ろ", rom: "ro", meaning: "bath" },{ char: "に", rom: "ni" },{ char: "は", rom: "ha" },{ char: "い", rom: "i" },{ char: "る", rom: "ru", meaning: "enter" }], korean: [{ char: "목", rom: "mok" },{ char: "욕", rom: "yok", meaning: "bath" },{ char: "하", rom: "ha", meaning: "do" },{ char: "다", rom: "da" }], mandarin: [{ char: "洗", rom: "xǐ", meaning: "wash" },{ char: "澡", rom: "zǎo", meaning: "bathe" }] } },
+  { cat: "Daily", english: "Bed", japanese: "ベッド", korean: "침대", mandarin: "床", romanization: { japanese: "beddo", korean: "chimdae", mandarin: "chuáng" }, breakdown: { japanese: [{ char: "ベ", rom: "be" },{ char: "ッ", rom: "" },{ char: "ド", rom: "do" }], korean: [{ char: "침", rom: "chim", meaning: "sleep" },{ char: "대", rom: "dae", meaning: "platform" }], mandarin: [{ char: "床", rom: "chuáng", meaning: "bed" }] } },
+  { cat: "Daily", english: "Pillow", japanese: "まくら", korean: "베개", mandarin: "枕头", romanization: { japanese: "makura", korean: "begae", mandarin: "zhěn tou" }, breakdown: { japanese: [{ char: "ま", rom: "ma" },{ char: "く", rom: "ku" },{ char: "ら", rom: "ra" }], korean: [{ char: "베", rom: "be" },{ char: "개", rom: "gae" }], mandarin: [{ char: "枕", rom: "zhěn", meaning: "pillow" },{ char: "头", rom: "tou", meaning: "head" }] } },
+  { cat: "Daily", english: "Soap", japanese: "せっけん", korean: "비누", mandarin: "肥皂", romanization: { japanese: "sekken", korean: "binu", mandarin: "féi zào" }, breakdown: { japanese: [{ char: "せ", rom: "se" },{ char: "っ", rom: "" },{ char: "け", rom: "ke" },{ char: "ん", rom: "n" }], korean: [{ char: "비", rom: "bi" },{ char: "누", rom: "nu" }], mandarin: [{ char: "肥", rom: "féi", meaning: "fat" },{ char: "皂", rom: "zào", meaning: "soap" }] } },
+  { cat: "Daily", english: "Towel", japanese: "タオル", korean: "수건", mandarin: "毛巾", romanization: { japanese: "taoru", korean: "sugeon", mandarin: "máo jīn" }, breakdown: { japanese: [{ char: "タ", rom: "ta" },{ char: "オ", rom: "o" },{ char: "ル", rom: "ru" }], korean: [{ char: "수", rom: "su" },{ char: "건", rom: "geon" }], mandarin: [{ char: "毛", rom: "máo", meaning: "hair" },{ char: "巾", rom: "jīn", meaning: "cloth" }] } },
+  { cat: "Daily", english: "Toothbrush", japanese: "はブラシ", korean: "칫솔", mandarin: "牙刷", romanization: { japanese: "haburashi", korean: "chissol", mandarin: "yá shuā" }, breakdown: { japanese: [{ char: "は", rom: "ha", meaning: "tooth" },{ char: "ブ", rom: "bu" },{ char: "ラ", rom: "ra" },{ char: "シ", rom: "shi" }], korean: [{ char: "칫", rom: "chit", meaning: "tooth" },{ char: "솔", rom: "sol", meaning: "brush" }], mandarin: [{ char: "牙", rom: "yá", meaning: "tooth" },{ char: "刷", rom: "shuā", meaning: "brush" }] } },
+
+  // PLACES (6)
+  { cat: "Places", english: "Home", japanese: "いえ", korean: "집", mandarin: "家", romanization: { japanese: "ie", korean: "jip", mandarin: "jiā" }, breakdown: { japanese: [{ char: "い", rom: "i" },{ char: "え", rom: "e" }], korean: [{ char: "집", rom: "jip", meaning: "home" }], mandarin: [{ char: "家", rom: "jiā", meaning: "home" }] } },
+  { cat: "Places", english: "Park", japanese: "こうえん", korean: "공원", mandarin: "公园", romanization: { japanese: "kouen", korean: "gongwon", mandarin: "gōng yuán" }, breakdown: { japanese: [{ char: "こ", rom: "ko" },{ char: "う", rom: "u" },{ char: "え", rom: "e" },{ char: "ん", rom: "n" }], korean: [{ char: "공", rom: "gong", meaning: "public" },{ char: "원", rom: "won", meaning: "garden" }], mandarin: [{ char: "公", rom: "gōng", meaning: "public" },{ char: "园", rom: "yuán", meaning: "garden" }] } },
+  { cat: "Places", english: "Store", japanese: "みせ", korean: "가게", mandarin: "商店", romanization: { japanese: "mise", korean: "gage", mandarin: "shāng diàn" }, breakdown: { japanese: [{ char: "み", rom: "mi" },{ char: "せ", rom: "se" }], korean: [{ char: "가", rom: "ga" },{ char: "게", rom: "ge" }], mandarin: [{ char: "商", rom: "shāng", meaning: "trade" },{ char: "店", rom: "diàn", meaning: "shop" }] } },
+  { cat: "Places", english: "Library", japanese: "としょかん", korean: "도서관", mandarin: "图书馆", romanization: { japanese: "toshokan", korean: "doseogwan", mandarin: "tú shū guǎn" }, breakdown: { japanese: [{ char: "と", rom: "to" },{ char: "し", rom: "sho" },{ char: "ょ", rom: "" },{ char: "か", rom: "ka" },{ char: "ん", rom: "n", meaning: "hall" }], korean: [{ char: "도", rom: "do" },{ char: "서", rom: "seo", meaning: "book" },{ char: "관", rom: "gwan", meaning: "hall" }], mandarin: [{ char: "图", rom: "tú", meaning: "picture" },{ char: "书", rom: "shū", meaning: "book" },{ char: "馆", rom: "guǎn", meaning: "hall" }] } },
+  { cat: "Places", english: "Hospital", japanese: "びょういん", korean: "병원", mandarin: "医院", romanization: { japanese: "byouin", korean: "byeongwon", mandarin: "yī yuàn" }, breakdown: { japanese: [{ char: "び", rom: "byo" },{ char: "ょ", rom: "" },{ char: "う", rom: "u", meaning: "sick" },{ char: "い", rom: "i" },{ char: "ん", rom: "n", meaning: "house" }], korean: [{ char: "병", rom: "byeong", meaning: "illness" },{ char: "원", rom: "won", meaning: "house" }], mandarin: [{ char: "医", rom: "yī", meaning: "medicine" },{ char: "院", rom: "yuàn", meaning: "house" }] } },
+  { cat: "Places", english: "Playground", japanese: "あそびば", korean: "놀이터", mandarin: "游乐场", romanization: { japanese: "asobiba", korean: "noriteo", mandarin: "yóu lè chǎng" }, breakdown: { japanese: [{ char: "あ", rom: "a" },{ char: "そ", rom: "so" },{ char: "び", rom: "bi", meaning: "play" },{ char: "ば", rom: "ba", meaning: "place" }], korean: [{ char: "놀", rom: "nol", meaning: "play" },{ char: "이", rom: "i" },{ char: "터", rom: "teo", meaning: "place" }], mandarin: [{ char: "游", rom: "yóu", meaning: "play" },{ char: "乐", rom: "lè", meaning: "joy" },{ char: "场", rom: "chǎng", meaning: "field" }] } },
+
+  // ACTIONS (6 new)
+  { cat: "Actions", english: "Play", japanese: "あそぶ", korean: "놀다", mandarin: "玩", romanization: { japanese: "asobu", korean: "nolda", mandarin: "wán" }, breakdown: { japanese: [{ char: "あ", rom: "a" },{ char: "そ", rom: "so" },{ char: "ぶ", rom: "bu", meaning: "play" }], korean: [{ char: "놀", rom: "nol", meaning: "play" },{ char: "다", rom: "da" }], mandarin: [{ char: "玩", rom: "wán", meaning: "play" }] } },
+  { cat: "Actions", english: "Jump", japanese: "とぶ", korean: "뛰다", mandarin: "跳", romanization: { japanese: "tobu", korean: "ttwida", mandarin: "tiào" }, breakdown: { japanese: [{ char: "と", rom: "to" },{ char: "ぶ", rom: "bu", meaning: "jump" }], korean: [{ char: "뛰", rom: "ttwi", meaning: "jump" },{ char: "다", rom: "da" }], mandarin: [{ char: "跳", rom: "tiào", meaning: "jump" }] } },
+  { cat: "Actions", english: "Draw", japanese: "えをかく", korean: "그리다", mandarin: "画", romanization: { japanese: "e o kaku", korean: "geurida", mandarin: "huà" }, breakdown: { japanese: [{ char: "え", rom: "e", meaning: "picture" },{ char: "を", rom: "o", meaning: "object" },{ char: "か", rom: "ka" },{ char: "く", rom: "ku", meaning: "draw" }], korean: [{ char: "그", rom: "geu" },{ char: "리", rom: "ri", meaning: "draw" },{ char: "다", rom: "da" }], mandarin: [{ char: "画", rom: "huà", meaning: "draw" }] } },
+  { cat: "Actions", english: "Sit", japanese: "すわる", korean: "앉다", mandarin: "坐", romanization: { japanese: "suwaru", korean: "anjda", mandarin: "zuò" }, breakdown: { japanese: [{ char: "す", rom: "su" },{ char: "わ", rom: "wa" },{ char: "る", rom: "ru", meaning: "sit" }], korean: [{ char: "앉", rom: "anj", meaning: "sit" },{ char: "다", rom: "da" }], mandarin: [{ char: "坐", rom: "zuò", meaning: "sit" }] } },
+  { cat: "Actions", english: "Stand", japanese: "たつ", korean: "서다", mandarin: "站", romanization: { japanese: "tatsu", korean: "seoda", mandarin: "zhàn" }, breakdown: { japanese: [{ char: "た", rom: "ta" },{ char: "つ", rom: "tsu", meaning: "stand" }], korean: [{ char: "서", rom: "seo", meaning: "stand" },{ char: "다", rom: "da" }], mandarin: [{ char: "站", rom: "zhàn", meaning: "stand" }] } },
+  { cat: "Actions", english: "Help", japanese: "たすける", korean: "돕다", mandarin: "帮助", romanization: { japanese: "tasukeru", korean: "dopda", mandarin: "bāng zhù" }, breakdown: { japanese: [{ char: "た", rom: "ta" },{ char: "す", rom: "su" },{ char: "け", rom: "ke", meaning: "help" },{ char: "る", rom: "ru" }], korean: [{ char: "돕", rom: "dop", meaning: "help" },{ char: "다", rom: "da" }], mandarin: [{ char: "帮", rom: "bāng", meaning: "help" },{ char: "助", rom: "zhù", meaning: "assist" }] } },
+
+  // TIME: days of the week (7)
+  { cat: "Time", english: "Monday", japanese: "げつようび", korean: "월요일", mandarin: "星期一", romanization: { japanese: "getsuyoubi", korean: "woryoil", mandarin: "xīng qī yī" }, breakdown: { japanese: [{ char: "げ", rom: "ge" },{ char: "つ", rom: "tsu", meaning: "moon" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "월", rom: "wol", meaning: "moon" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "一", rom: "yī", meaning: "one" }] } },
+  { cat: "Time", english: "Tuesday", japanese: "かようび", korean: "화요일", mandarin: "星期二", romanization: { japanese: "kayoubi", korean: "hwayoil", mandarin: "xīng qī èr" }, breakdown: { japanese: [{ char: "か", rom: "ka", meaning: "fire" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "화", rom: "hwa", meaning: "fire" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "二", rom: "èr", meaning: "two" }] } },
+  { cat: "Time", english: "Wednesday", japanese: "すいようび", korean: "수요일", mandarin: "星期三", romanization: { japanese: "suiyoubi", korean: "suyoil", mandarin: "xīng qī sān" }, breakdown: { japanese: [{ char: "す", rom: "su" },{ char: "い", rom: "i", meaning: "water" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "수", rom: "su", meaning: "water" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "三", rom: "sān", meaning: "three" }] } },
+  { cat: "Time", english: "Thursday", japanese: "もくようび", korean: "목요일", mandarin: "星期四", romanization: { japanese: "mokuyoubi", korean: "mogyoil", mandarin: "xīng qī sì" }, breakdown: { japanese: [{ char: "も", rom: "mo" },{ char: "く", rom: "ku", meaning: "tree" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "목", rom: "mok", meaning: "tree" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "四", rom: "sì", meaning: "four" }] } },
+  { cat: "Time", english: "Friday", japanese: "きんようび", korean: "금요일", mandarin: "星期五", romanization: { japanese: "kinyoubi", korean: "geumyoil", mandarin: "xīng qī wǔ" }, breakdown: { japanese: [{ char: "き", rom: "ki" },{ char: "ん", rom: "n", meaning: "gold" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "금", rom: "geum", meaning: "gold" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "五", rom: "wǔ", meaning: "five" }] } },
+  { cat: "Time", english: "Saturday", japanese: "どようび", korean: "토요일", mandarin: "星期六", romanization: { japanese: "doyoubi", korean: "toyoil", mandarin: "xīng qī liù" }, breakdown: { japanese: [{ char: "ど", rom: "do", meaning: "earth" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "토", rom: "to", meaning: "earth" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "六", rom: "liù", meaning: "six" }] } },
+  { cat: "Time", english: "Sunday", japanese: "にちようび", korean: "일요일", mandarin: "星期日", romanization: { japanese: "nichiyoubi", korean: "iryoil", mandarin: "xīng qī rì" }, breakdown: { japanese: [{ char: "に", rom: "ni" },{ char: "ち", rom: "chi", meaning: "sun" },{ char: "よ", rom: "yo" },{ char: "う", rom: "u" },{ char: "び", rom: "bi", meaning: "day" }], korean: [{ char: "일", rom: "il", meaning: "sun" },{ char: "요", rom: "yo" },{ char: "일", rom: "il", meaning: "day" }], mandarin: [{ char: "星", rom: "xīng", meaning: "star" },{ char: "期", rom: "qī", meaning: "period" },{ char: "日", rom: "rì", meaning: "sun" }] } },
+
+  // COLORS (6 new)
+  { cat: "Colors", english: "Purple", japanese: "むらさき", korean: "보라색", mandarin: "紫色", romanization: { japanese: "murasaki", korean: "borasaek", mandarin: "zǐ sè" }, breakdown: { japanese: [{ char: "む", rom: "mu" },{ char: "ら", rom: "ra" },{ char: "さ", rom: "sa" },{ char: "き", rom: "ki" }], korean: [{ char: "보", rom: "bo" },{ char: "라", rom: "ra", meaning: "purple" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "紫", rom: "zǐ", meaning: "purple" },{ char: "色", rom: "sè", meaning: "color" }] } },
+  { cat: "Colors", english: "Orange (color)", japanese: "オレンジいろ", korean: "주황색", mandarin: "橙色", romanization: { japanese: "orenjiiro", korean: "juhwangsaek", mandarin: "chéng sè" }, breakdown: { japanese: [{ char: "オ", rom: "o" },{ char: "レ", rom: "re" },{ char: "ン", rom: "n" },{ char: "ジ", rom: "ji" },{ char: "い", rom: "i" },{ char: "ろ", rom: "ro", meaning: "color" }], korean: [{ char: "주", rom: "ju" },{ char: "황", rom: "hwang" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "橙", rom: "chéng", meaning: "orange" },{ char: "色", rom: "sè", meaning: "color" }] } },
+  { cat: "Colors", english: "Pink", japanese: "ピンク", korean: "분홍색", mandarin: "粉色", romanization: { japanese: "pinku", korean: "bunhongsaek", mandarin: "fěn sè" }, breakdown: { japanese: [{ char: "ピ", rom: "pi" },{ char: "ン", rom: "n" },{ char: "ク", rom: "ku" }], korean: [{ char: "분", rom: "bun" },{ char: "홍", rom: "hong" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "粉", rom: "fěn", meaning: "powder" },{ char: "色", rom: "sè", meaning: "color" }] } },
+  { cat: "Colors", english: "White", japanese: "しろ", korean: "흰색", mandarin: "白色", romanization: { japanese: "shiro", korean: "huinsaek", mandarin: "bái sè" }, breakdown: { japanese: [{ char: "し", rom: "shi" },{ char: "ろ", rom: "ro", meaning: "color" }], korean: [{ char: "흰", rom: "huin", meaning: "white" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "白", rom: "bái", meaning: "white" },{ char: "色", rom: "sè", meaning: "color" }] } },
+  { cat: "Colors", english: "Black", japanese: "くろ", korean: "검은색", mandarin: "黑色", romanization: { japanese: "kuro", korean: "geomeunsaek", mandarin: "hēi sè" }, breakdown: { japanese: [{ char: "く", rom: "ku" },{ char: "ろ", rom: "ro", meaning: "color" }], korean: [{ char: "검", rom: "geom", meaning: "black" },{ char: "은", rom: "eun" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "黑", rom: "hēi", meaning: "black" },{ char: "色", rom: "sè", meaning: "color" }] } },
+  { cat: "Colors", english: "Brown", japanese: "ちゃいろ", korean: "갈색", mandarin: "棕色", romanization: { japanese: "chairo", korean: "galsaek", mandarin: "zōng sè" }, breakdown: { japanese: [{ char: "ち", rom: "cha" },{ char: "ゃ", rom: "" },{ char: "い", rom: "i" },{ char: "ろ", rom: "ro", meaning: "color" }], korean: [{ char: "갈", rom: "gal", meaning: "brown" },{ char: "색", rom: "saek", meaning: "color" }], mandarin: [{ char: "棕", rom: "zōng", meaning: "brown" },{ char: "色", rom: "sè", meaning: "color" }] } },
+
+  // PHRASES (5 new)
+  { cat: "Phrases", english: "You're welcome", japanese: "どういたしまして", korean: "천만에요", mandarin: "不客气", romanization: { japanese: "douitashimashite", korean: "cheonmaneyo", mandarin: "bù kè qi" }, breakdown: { japanese: [{ char: "ど", rom: "do" },{ char: "う", rom: "u" },{ char: "い", rom: "i" },{ char: "た", rom: "ta" },{ char: "し", rom: "shi" },{ char: "ま", rom: "ma" },{ char: "し", rom: "shi" },{ char: "て", rom: "te" }], korean: [{ char: "천", rom: "cheon" },{ char: "만", rom: "man" },{ char: "에", rom: "e" },{ char: "요", rom: "yo", meaning: "polite" }], mandarin: [{ char: "不", rom: "bù", meaning: "not" },{ char: "客", rom: "kè", meaning: "guest" },{ char: "气", rom: "qi", meaning: "manner" }] } },
+  { cat: "Phrases", english: "How old are you?", japanese: "なんさいですか", korean: "몇 살이에요?", mandarin: "你几岁?", romanization: { japanese: "nansai desu ka", korean: "myeot sarieyo?", mandarin: "nǐ jǐ suì?" }, breakdown: { japanese: [{ char: "な", rom: "na" },{ char: "ん", rom: "n", meaning: "what" },{ char: "さ", rom: "sa" },{ char: "い", rom: "i", meaning: "age" },{ char: "で", rom: "de" },{ char: "す", rom: "su", meaning: "is" },{ char: "か", rom: "ka", meaning: "question" }], korean: [{ char: "몇", rom: "myeot", meaning: "how many" },{ char: "살", rom: "sal", meaning: "age" },{ char: "이", rom: "i" },{ char: "에", rom: "e" },{ char: "요", rom: "yo", meaning: "polite" }], mandarin: [{ char: "你", rom: "nǐ", meaning: "you" },{ char: "几", rom: "jǐ", meaning: "how many" },{ char: "岁", rom: "suì", meaning: "year of age" }] } },
+  { cat: "Phrases", english: "Can I have...", japanese: "...をください", korean: "...주세요", mandarin: "我可以要...", romanization: { japanese: "...o kudasai", korean: "...juseyo", mandarin: "wǒ kě yǐ yào..." }, breakdown: { japanese: [{ char: "を", rom: "o", meaning: "object" },{ char: "く", rom: "ku" },{ char: "だ", rom: "da" },{ char: "さ", rom: "sa" },{ char: "い", rom: "i", meaning: "please give" }], korean: [{ char: "주", rom: "ju", meaning: "give" },{ char: "세", rom: "se" },{ char: "요", rom: "yo", meaning: "polite" }], mandarin: [{ char: "我", rom: "wǒ", meaning: "I" },{ char: "可", rom: "kě", meaning: "can" },{ char: "以", rom: "yǐ" },{ char: "要", rom: "yào", meaning: "want" }] } },
+  { cat: "Phrases", english: "I'm sorry", japanese: "ごめんなさい", korean: "미안해요", mandarin: "对不起", romanization: { japanese: "gomennasai", korean: "mianhaeyo", mandarin: "duì bu qǐ" }, breakdown: { japanese: [{ char: "ご", rom: "go", meaning: "polite" },{ char: "め", rom: "me" },{ char: "ん", rom: "n", meaning: "forgive" },{ char: "な", rom: "na" },{ char: "さ", rom: "sa" },{ char: "い", rom: "i" }], korean: [{ char: "미", rom: "mi" },{ char: "안", rom: "an", meaning: "sorry" },{ char: "해", rom: "hae", meaning: "do" },{ char: "요", rom: "yo", meaning: "polite" }], mandarin: [{ char: "对", rom: "duì" },{ char: "不", rom: "bu", meaning: "not" },{ char: "起", rom: "qǐ" }] } },
+  { cat: "Phrases", english: "More please", japanese: "もっとください", korean: "더 주세요", mandarin: "再来一点", romanization: { japanese: "motto kudasai", korean: "deo juseyo", mandarin: "zài lái yī diǎn" }, breakdown: { japanese: [{ char: "も", rom: "mo" },{ char: "っ", rom: "" },{ char: "と", rom: "to", meaning: "more" },{ char: "く", rom: "ku" },{ char: "だ", rom: "da" },{ char: "さ", rom: "sa" },{ char: "い", rom: "i", meaning: "please" }], korean: [{ char: "더", rom: "deo", meaning: "more" },{ char: "주", rom: "ju", meaning: "give" },{ char: "세", rom: "se" },{ char: "요", rom: "yo", meaning: "polite" }], mandarin: [{ char: "再", rom: "zài", meaning: "again" },{ char: "来", rom: "lái", meaning: "come" },{ char: "一", rom: "yī", meaning: "one" },{ char: "点", rom: "diǎn", meaning: "bit" }] } }
 ];
 
 /**
@@ -511,6 +590,80 @@ const LATIN_TRANSLATIONS: Record<string, LatinRow> = {
   "Plane":              { spanish: { word: "Avión",               phon: "ah-VYOHN" },          french: { word: "Avion",                phon: "ah-VYOHN" },        german: { word: "Flugzeug",               phon: "FLOOK-tsoyk" } },
   "Bike":               { spanish: { word: "Bicicleta",           phon: "bee-see-KLEH-tah" },  french: { word: "Vélo",                 phon: "vay-LOH" },         german: { word: "Fahrrad",                phon: "FAR-raht" } },
   "Boat":               { spanish: { word: "Barco",               phon: "BAR-koh" },           french: { word: "Bateau",               phon: "bah-TOH" },         german: { word: "Boot",                   phon: "BOHT" } },
+
+  // EXPANSION SET — FOOD
+  "Orange (fruit)":     { spanish: { word: "Naranja",             phon: "nah-RAHN-hah" },      french: { word: "Orange",               phon: "oh-RAHNZH" },       german: { word: "Orange",                 phon: "oh-RAHN-zheh" } },
+  "Strawberry":         { spanish: { word: "Fresa",               phon: "FREH-sah" },          french: { word: "Fraise",               phon: "FREHZ" },           german: { word: "Erdbeere",               phon: "EHRT-beh-reh" } },
+  "Grape":              { spanish: { word: "Uva",                 phon: "OO-vah" },            french: { word: "Raisin",               phon: "reh-ZAHN" },        german: { word: "Traube",                 phon: "TROW-beh" } },
+  "Watermelon":         { spanish: { word: "Sandía",              phon: "sahn-DEE-ah" },       french: { word: "Pastèque",             phon: "pahs-TEK" },        german: { word: "Wassermelone",           phon: "VAH-ser-meh-LOH-neh" } },
+  "Carrot":             { spanish: { word: "Zanahoria",           phon: "sah-nah-OR-yah" },    french: { word: "Carotte",              phon: "kah-ROHT" },        german: { word: "Karotte",                phon: "kah-ROHT-teh" } },
+  "Potato":             { spanish: { word: "Papa",                phon: "PAH-pah" },           french: { word: "Pomme de terre",       phon: "pohm duh TEHR" },   german: { word: "Kartoffel",              phon: "kar-TOFF-el" } },
+  "Breakfast":          { spanish: { word: "Desayuno",            phon: "deh-sah-YOO-noh" },   french: { word: "Petit déjeuner",       phon: "puh-TEE day-zhuh-NAY" }, german: { word: "Frühstück",         phon: "FRUE-shtuek" } },
+  "Lunch":              { spanish: { word: "Almuerzo",            phon: "ahl-MWEHR-soh" },     french: { word: "Déjeuner",             phon: "day-zhuh-NAY" },    german: { word: "Mittagessen",            phon: "MIT-tahg-es-en" } },
+  "Dinner":             { spanish: { word: "Cena",                phon: "SEH-nah" },           french: { word: "Dîner",                phon: "dee-NAY" },         german: { word: "Abendessen",             phon: "AH-bent-es-en" } },
+  "Juice":              { spanish: { word: "Jugo",                phon: "HOO-goh" },           french: { word: "Jus",                  phon: "ZHOO" },            german: { word: "Saft",                   phon: "ZAHFT" } },
+  "Ice cream":          { spanish: { word: "Helado",              phon: "eh-LAH-doh" },        french: { word: "Glace",                phon: "GLAHS" },           german: { word: "Eis",                    phon: "ICE" } },
+  "Cookie":             { spanish: { word: "Galleta",             phon: "gah-YEH-tah" },       french: { word: "Biscuit",              phon: "bee-SKWEE" },       german: { word: "Keks",                   phon: "KEKS" } },
+  "Cheese":             { spanish: { word: "Queso",               phon: "KEH-soh" },           french: { word: "Fromage",              phon: "froh-MAHZH" },      german: { word: "Käse",                   phon: "KAY-zeh" } },
+  "Butter":             { spanish: { word: "Mantequilla",         phon: "mahn-teh-KEE-yah" },  french: { word: "Beurre",               phon: "BUHR" },            german: { word: "Butter",                 phon: "BOO-ter" } },
+  "Salt":               { spanish: { word: "Sal",                 phon: "SAHL" },              french: { word: "Sel",                  phon: "SEHL" },            german: { word: "Salz",                   phon: "ZAHLTS" } },
+
+  // EXPANSION SET — DAILY (clothes + routine)
+  "Shirt":              { spanish: { word: "Camisa",              phon: "kah-MEE-sah" },       french: { word: "Chemise",              phon: "shuh-MEEZ" },       german: { word: "Hemd",                   phon: "HEMT" } },
+  "Pants":              { spanish: { word: "Pantalones",          phon: "pahn-tah-LOH-nes" },  french: { word: "Pantalon",             phon: "pahn-tah-LOHN" },   german: { word: "Hose",                   phon: "HOH-zeh" } },
+  "Shoes":              { spanish: { word: "Zapatos",             phon: "sah-PAH-tohs" },      french: { word: "Chaussures",           phon: "shoh-SUUR" },       german: { word: "Schuhe",                 phon: "SHOO-eh" } },
+  "Socks":              { spanish: { word: "Calcetines",          phon: "kahl-seh-TEE-nes" },  french: { word: "Chaussettes",          phon: "shoh-SET" },        german: { word: "Socken",                 phon: "ZOH-ken" } },
+  "Hat":                { spanish: { word: "Sombrero",            phon: "som-BREH-roh" },      french: { word: "Chapeau",              phon: "shah-POH" },        german: { word: "Hut",                    phon: "HOOT" } },
+  "Coat":               { spanish: { word: "Abrigo",              phon: "ah-BREE-goh" },       french: { word: "Manteau",              phon: "mahn-TOH" },        german: { word: "Mantel",                 phon: "MAHN-tel" } },
+  "Pajamas":            { spanish: { word: "Pijama",              phon: "pee-HAH-mah" },       french: { word: "Pyjama",               phon: "pee-zhah-MAH" },    german: { word: "Schlafanzug",            phon: "SHLAHF-ahn-tsook" } },
+  "Brush teeth":        { spanish: { word: "Cepillarse los dientes", phon: "seh-pee-YAR-seh los DYEN-tes" }, french: { word: "Se brosser les dents", phon: "suh broh-SAY lay DAHN" }, german: { word: "Zähne putzen",    phon: "TSEH-neh POOT-sen" } },
+  "Wash hands":         { spanish: { word: "Lavarse las manos",   phon: "lah-VAR-seh las MAH-nohs" }, french: { word: "Se laver les mains",  phon: "suh lah-VAY lay MAHN" }, german: { word: "Hände waschen",       phon: "HEN-deh VAH-shen" } },
+  "Take a bath":        { spanish: { word: "Bañarse",             phon: "bah-NYAR-seh" },      french: { word: "Prendre un bain",      phon: "PRAHN-druh uhn BAHN" }, german: { word: "Baden",                phon: "BAH-den" } },
+  "Bed":                { spanish: { word: "Cama",                phon: "KAH-mah" },           french: { word: "Lit",                  phon: "LEE" },             german: { word: "Bett",                   phon: "BET" } },
+  "Pillow":             { spanish: { word: "Almohada",            phon: "ahl-moh-AH-dah" },    french: { word: "Oreiller",             phon: "oh-ray-YAY" },      german: { word: "Kissen",                 phon: "KISS-en" } },
+  "Soap":               { spanish: { word: "Jabón",               phon: "hah-BOHN" },          french: { word: "Savon",                phon: "sah-VOHN" },        german: { word: "Seife",                  phon: "ZAI-feh" } },
+  "Towel":              { spanish: { word: "Toalla",              phon: "toh-AH-yah" },        french: { word: "Serviette",            phon: "sehr-VYET" },       german: { word: "Handtuch",               phon: "HAHNT-tookh" } },
+  "Toothbrush":         { spanish: { word: "Cepillo de dientes",  phon: "seh-PEE-yoh deh DYEN-tes" }, french: { word: "Brosse à dents",   phon: "BROHS ah DAHN" },   german: { word: "Zahnbürste",             phon: "TSAHN-buer-steh" } },
+
+  // EXPANSION SET — PLACES
+  "Home":               { spanish: { word: "Casa",                phon: "KAH-sah" },           french: { word: "Maison",               phon: "may-ZOHN" },        german: { word: "Zuhause",                phon: "tsoo-HOW-zeh" } },
+  "Park":               { spanish: { word: "Parque",              phon: "PAR-keh" },           french: { word: "Parc",                 phon: "PARK" },            german: { word: "Park",                   phon: "PARK" } },
+  "Store":              { spanish: { word: "Tienda",              phon: "TYEN-dah" },          french: { word: "Magasin",              phon: "mah-gah-ZAHN" },    german: { word: "Geschäft",               phon: "geh-SHEFT" } },
+  "Library":            { spanish: { word: "Biblioteca",          phon: "bee-blee-oh-TEH-kah" }, french: { word: "Bibliothèque",       phon: "bee-blee-oh-TEK" }, german: { word: "Bibliothek",             phon: "bee-blee-oh-TEHK" } },
+  "Hospital":           { spanish: { word: "Hospital",            phon: "os-pee-TAHL" },       french: { word: "Hôpital",              phon: "oh-pee-TAHL" },     german: { word: "Krankenhaus",            phon: "KRAHN-ken-house" } },
+  "Playground":         { spanish: { word: "Parque infantil",     phon: "PAR-keh een-fahn-TEEL" }, french: { word: "Aire de jeux",     phon: "EHR duh ZHUH" },    german: { word: "Spielplatz",             phon: "SHPEEL-plahts" } },
+
+  // EXPANSION SET — ACTIONS
+  "Play":               { spanish: { word: "Jugar",               phon: "hoo-GAR" },           french: { word: "Jouer",                phon: "zhoo-AY" },         german: { word: "Spielen",                phon: "SHPEE-len" } },
+  "Jump":               { spanish: { word: "Saltar",              phon: "sahl-TAR" },          french: { word: "Sauter",               phon: "soh-TAY" },         german: { word: "Springen",               phon: "SHPRING-en" } },
+  "Draw":               { spanish: { word: "Dibujar",             phon: "dee-boo-HAR" },       french: { word: "Dessiner",             phon: "deh-see-NAY" },     german: { word: "Zeichnen",               phon: "TSAIKH-nen" } },
+  "Sit":                { spanish: { word: "Sentarse",            phon: "sen-TAR-seh" },       french: { word: "S'asseoir",            phon: "sah-SWAR" },        german: { word: "Sitzen",                 phon: "ZIT-sen" } },
+  "Stand":              { spanish: { word: "Pararse",             phon: "pah-RAR-seh" },       french: { word: "Se lever",             phon: "suh luh-VAY" },     german: { word: "Stehen",                 phon: "SHTAY-en" } },
+  "Help":               { spanish: { word: "Ayudar",              phon: "ah-yoo-DAR" },        french: { word: "Aider",                phon: "ay-DAY" },          german: { word: "Helfen",                 phon: "HEL-fen" } },
+
+  // EXPANSION SET — TIME: days
+  "Monday":             { spanish: { word: "Lunes",               phon: "LOO-nes" },           french: { word: "Lundi",                phon: "luhn-DEE" },        german: { word: "Montag",                 phon: "MOHN-tahk" } },
+  "Tuesday":            { spanish: { word: "Martes",              phon: "MAR-tes" },           french: { word: "Mardi",                phon: "mar-DEE" },         german: { word: "Dienstag",               phon: "DEENS-tahk" } },
+  "Wednesday":          { spanish: { word: "Miércoles",           phon: "MYEHR-koh-les" },     french: { word: "Mercredi",             phon: "mehr-kruh-DEE" },   german: { word: "Mittwoch",               phon: "MIT-vokh" } },
+  "Thursday":           { spanish: { word: "Jueves",              phon: "HWAY-ves" },          french: { word: "Jeudi",                phon: "zhuh-DEE" },        german: { word: "Donnerstag",             phon: "DON-ers-tahk" } },
+  "Friday":             { spanish: { word: "Viernes",             phon: "VYEHR-nes" },         french: { word: "Vendredi",             phon: "vahn-druh-DEE" },   german: { word: "Freitag",                phon: "FRY-tahk" } },
+  "Saturday":           { spanish: { word: "Sábado",              phon: "SAH-bah-doh" },       french: { word: "Samedi",               phon: "sahm-DEE" },        german: { word: "Samstag",                phon: "ZAHMS-tahk" } },
+  "Sunday":             { spanish: { word: "Domingo",             phon: "doh-MEEN-goh" },      french: { word: "Dimanche",             phon: "dee-MAHNSH" },      german: { word: "Sonntag",                phon: "ZON-tahk" } },
+
+  // EXPANSION SET — COLORS
+  "Purple":             { spanish: { word: "Morado",              phon: "moh-RAH-doh" },       french: { word: "Violet",               phon: "vee-oh-LAY" },      german: { word: "Lila",                   phon: "LEE-lah" } },
+  "Orange (color)":     { spanish: { word: "Anaranjado",          phon: "ah-nah-rahn-HAH-doh" }, french: { word: "Orange",             phon: "oh-RAHNZH" },       german: { word: "Orange",                 phon: "oh-RAHN-zheh" } },
+  "Pink":               { spanish: { word: "Rosa",                phon: "ROH-sah" },           french: { word: "Rose",                 phon: "ROHZ" },            german: { word: "Rosa",                   phon: "ROH-zah" } },
+  "White":              { spanish: { word: "Blanco",              phon: "BLAHN-koh" },         french: { word: "Blanc",                phon: "BLAHN" },           german: { word: "Weiß",                   phon: "VICE" } },
+  "Black":              { spanish: { word: "Negro",               phon: "NEH-groh" },          french: { word: "Noir",                 phon: "NWAR" },            german: { word: "Schwarz",                phon: "SHVARTS" } },
+  "Brown":              { spanish: { word: "Marrón",              phon: "mah-ROHN" },          french: { word: "Marron",               phon: "mah-ROHN" },        german: { word: "Braun",                  phon: "BROWN" } },
+
+  // EXPANSION SET — PHRASES
+  "You're welcome":     { spanish: { word: "De nada",             phon: "deh NAH-dah" },       french: { word: "De rien",              phon: "duh RYEN" },        german: { word: "Bitte schön",            phon: "BIT-eh SHURN" } },
+  "How old are you?":   { spanish: { word: "¿Cuántos años tienes?", phon: "KWAHN-tohs AH-nyohs TYEH-nes" }, french: { word: "Quel âge as-tu ?", phon: "kel AHZH ah TUE" }, german: { word: "Wie alt bist du?",      phon: "vee AHLT bist doo" } },
+  "Can I have...":      { spanish: { word: "¿Me das...?",         phon: "may DAHS" },          french: { word: "Je peux avoir... ?",   phon: "zhuh PUH ah-VWAR" }, german: { word: "Kann ich... haben?",    phon: "kahn ikh HAH-ben" } },
+  "I'm sorry":          { spanish: { word: "Lo siento",           phon: "loh SYEN-toh" },      french: { word: "Je suis désolé",       phon: "zhuh swee day-zoh-LAY" }, german: { word: "Es tut mir leid",   phon: "es toot meer LITE" } },
+  "More please":        { spanish: { word: "Más, por favor",      phon: "MAHS por fah-VOR" },  french: { word: "Encore, s'il vous plaît", phon: "ahn-KOR seel voo PLEH" }, german: { word: "Mehr, bitte",      phon: "MEHR BIT-eh" } },
 };
 
 // Merge Latin-script translations into flashcards
@@ -526,7 +679,749 @@ for (const card of flashcards) {
   }
 }
 
-export const categories = ['all', 'Greetings', 'Family', 'Feelings', 'Food', 'Animals', 'School', 'Numbers', 'Colors', 'Phrases', 'Body', 'Time', 'Actions', 'Weather', 'Transport'];
+/**
+ * Ukrainian translations keyed by `english`. Cyrillic word + kid-readable
+ * Latin-script phonetic. We don't generate a per-letter breakdown for
+ * Ukrainian because Cyrillic is alphabetic (1 letter ≈ 1 sound) so the
+ * Latin phonetic effectively *is* the breakdown.
+ *
+ * Stress is marked by capitalizing the stressed syllable in `phon`, same
+ * convention as the Latin-script entries above.
+ */
+const UKRAINIAN_TRANSLATIONS: Record<string, { word: string; phon: string }> = {
+  // GREETINGS
+  "Hello":                  { word: "Привіт",            phon: "pry-VEET" },
+  "Thank you":              { word: "Дякую",             phon: "DYA-koo-yoo" },
+  "Good morning":           { word: "Доброго ранку",     phon: "DOB-roh-ho RAHN-koo" },
+  "Good night":             { word: "На добраніч",       phon: "nah dob-RAH-nich" },
+  "Goodbye":                { word: "До побачення",      phon: "doh poh-BAH-chen-nya" },
+  "Please":                 { word: "Будь ласка",        phon: "bood LAHS-kah" },
+  "Excuse me / Sorry":      { word: "Вибачте",           phon: "VY-bahch-teh" },
+  "Yes":                    { word: "Так",               phon: "TAHK" },
+  "No":                     { word: "Ні",                phon: "NEE" },
+
+  // FAMILY
+  "Mother / Mom":           { word: "Мама",              phon: "MAH-mah" },
+  "Father / Dad":           { word: "Тато",              phon: "TAH-toh" },
+  "Sister":                 { word: "Сестра",            phon: "ses-TRAH" },
+  "Brother":                { word: "Брат",              phon: "BRAHT" },
+  "Grandmother":            { word: "Бабуся",            phon: "bah-BOO-sya" },
+  "Grandfather":            { word: "Дідусь",            phon: "dee-DOOS" },
+  "Love":                   { word: "Любов",             phon: "lyoo-BOHV" },
+  "I love you":             { word: "Я тебе люблю",      phon: "yah teh-BEH lyoo-BLYOO" },
+
+  // FEELINGS
+  "Happy":                  { word: "Щасливий",          phon: "shchas-LY-vyy" },
+  "Sad":                    { word: "Сумний",            phon: "soom-NYY" },
+  "Hungry":                 { word: "Голодний",          phon: "hoh-LOHD-nyy" },
+  "Tired":                  { word: "Втомлений",         phon: "VTOM-leh-nyy" },
+  "Big":                    { word: "Великий",           phon: "veh-LY-kyy" },
+  "Small":                  { word: "Маленький",         phon: "mah-LEN-kyy" },
+  "Beautiful":              { word: "Гарний",            phon: "HAR-nyy" },
+  "Angry":                  { word: "Сердитий",          phon: "ser-DY-tyy" },
+  "Scared":                 { word: "Наляканий",         phon: "nah-LYAH-kah-nyy" },
+  "Hot":                    { word: "Гарячий",           phon: "hah-RYAH-chyy" },
+  "Cold":                   { word: "Холодний",          phon: "khoh-LOHD-nyy" },
+  "Fast":                   { word: "Швидкий",           phon: "shvyd-KYY" },
+  "Slow":                   { word: "Повільний",         phon: "poh-VEEL-nyy" },
+  "New":                    { word: "Новий",             phon: "noh-VYY" },
+  "Old":                    { word: "Старий",            phon: "stah-RYY" },
+
+  // FOOD
+  "Water":                  { word: "Вода",              phon: "voh-DAH" },
+  "Rice":                   { word: "Рис",               phon: "RYS" },
+  "Milk":                   { word: "Молоко",            phon: "moh-loh-KOH" },
+  "Fruit":                  { word: "Фрукт",             phon: "FROOKT" },
+  "Delicious":              { word: "Смачно",            phon: "SMAHCH-noh" },
+  "Bread":                  { word: "Хліб",              phon: "KHLEEB" },
+  "Egg":                    { word: "Яйце",              phon: "yai-TSEH" },
+  "Apple":                  { word: "Яблуко",            phon: "YAH-bloo-koh" },
+  "Banana":                 { word: "Банан",             phon: "bah-NAHN" },
+  "Noodles":                { word: "Локшина",           phon: "lok-SHY-nah" },
+  "Soup":                   { word: "Суп",               phon: "SOOP" },
+  "Tea":                    { word: "Чай",               phon: "CHAI" },
+  "Cake":                   { word: "Торт",              phon: "TORT" },
+
+  // ANIMALS
+  "Cat":                    { word: "Кіт",               phon: "KEET" },
+  "Dog":                    { word: "Собака",            phon: "soh-BAH-kah" },
+  "Fish":                   { word: "Риба",              phon: "RY-bah" },
+  "Bird":                   { word: "Птах",              phon: "PTAHKH" },
+  "Horse":                  { word: "Кінь",              phon: "KEEN" },
+  "Cow":                    { word: "Корова",            phon: "koh-ROH-vah" },
+  "Pig":                    { word: "Свиня",             phon: "svy-NYAH" },
+  "Rabbit":                 { word: "Кролик",            phon: "KROH-lyk" },
+  "Mouse":                  { word: "Миша",              phon: "MY-shah" },
+  "Elephant":               { word: "Слон",              phon: "SLOHN" },
+  "Lion":                   { word: "Лев",               phon: "LEV" },
+  "Tiger":                  { word: "Тигр",              phon: "TYHR" },
+
+  // SCHOOL
+  "School":                 { word: "Школа",             phon: "SHKOH-lah" },
+  "Book":                   { word: "Книга",             phon: "KNY-hah" },
+  "Teacher":                { word: "Вчитель",           phon: "VCHY-tel" },
+  "Friend":                 { word: "Друг",              phon: "DROOH" },
+
+  // NUMBERS
+  "One":                    { word: "Один",              phon: "oh-DYN" },
+  "Two":                    { word: "Два",               phon: "DVAH" },
+  "Three":                  { word: "Три",               phon: "TRY" },
+  "Four":                   { word: "Чотири",            phon: "choh-TY-ry" },
+  "Five":                   { word: "П'ять",             phon: "PYAHT" },
+  "Six":                    { word: "Шість",             phon: "SHEEST" },
+  "Seven":                  { word: "Сім",               phon: "SEEM" },
+  "Eight":                  { word: "Вісім",             phon: "VEE-seem" },
+  "Nine":                   { word: "Дев'ять",           phon: "DEH-vyaht" },
+  "Ten":                    { word: "Десять",            phon: "DEH-syaht" },
+  "Eleven":                 { word: "Одинадцять",        phon: "oh-dy-NAHD-tsyaht" },
+  "Twelve":                 { word: "Дванадцять",        phon: "dvah-NAHD-tsyaht" },
+  "Thirteen":               { word: "Тринадцять",        phon: "try-NAHD-tsyaht" },
+  "Twenty":                 { word: "Двадцять",          phon: "DVAHD-tsyaht" },
+  "Thirty":                 { word: "Тридцять",          phon: "TRYD-tsyaht" },
+  "One person":             { word: "Одна людина",       phon: "od-NAH lyoo-DY-nah" },
+  "Two people":             { word: "Дві людини",        phon: "DVEE lyoo-DY-ny" },
+  "One thing":              { word: "Одна річ",          phon: "od-NAH REECH" },
+  "Two things":             { word: "Дві речі",          phon: "DVEE REH-chee" },
+
+  // COLORS
+  "Red":                    { word: "Червоний",          phon: "cher-VOH-nyy" },
+  "Blue":                   { word: "Синій",             phon: "SY-nee" },
+  "Yellow":                 { word: "Жовтий",            phon: "ZHOV-tyy" },
+  "Green":                  { word: "Зелений",           phon: "zeh-LEH-nyy" },
+
+  // PHRASES
+  "Happy Birthday":         { word: "З днем народження", phon: "z dnem nah-ROH-dzhen-nya" },
+  "How are you?":           { word: "Як справи?",        phon: "yahk SPRAH-vy" },
+  "My name is...":          { word: "Мене звуть...",     phon: "meh-NEH ZVOOT" },
+  "Nice to meet you":       { word: "Приємно познайомитись", phon: "pry-YEM-noh poz-nai-YOH-my-tys" },
+  "See you later":          { word: "До зустрічі",       phon: "doh ZOOST-ree-chee" },
+  "Let's eat!":             { word: "Їжмо!",             phon: "YEEZH-moh" },
+  "Good job!":              { word: "Молодець!",         phon: "moh-loh-DETS" },
+  "What is this?":          { word: "Що це?",            phon: "shchoh TSEH" },
+  "Where is the bathroom?": { word: "Де туалет?",        phon: "deh too-ah-LET" },
+  "I don't understand":     { word: "Я не розумію",      phon: "yah neh roh-zoo-MEE-yoo" },
+
+  // BODY
+  "Eyes":                   { word: "Очі",               phon: "OH-chee" },
+  "Ears":                   { word: "Вуха",              phon: "VOO-khah" },
+  "Nose":                   { word: "Ніс",               phon: "NEES" },
+  "Mouth":                  { word: "Рот",               phon: "ROHT" },
+  "Hands":                  { word: "Руки",              phon: "ROO-ky" },
+  "Feet":                   { word: "Ноги",              phon: "NOH-hy" },
+  "Head":                   { word: "Голова",            phon: "hoh-loh-VAH" },
+  "Hair":                   { word: "Волосся",           phon: "voh-LOHS-sya" },
+
+  // TIME
+  "Today":                  { word: "Сьогодні",          phon: "syoh-HOHD-nee" },
+  "Tomorrow":               { word: "Завтра",            phon: "ZAHV-trah" },
+  "Yesterday":              { word: "Вчора",             phon: "VCHOH-rah" },
+  "Morning":                { word: "Ранок",             phon: "RAH-nok" },
+  "Night":                  { word: "Ніч",               phon: "NEECH" },
+  "Week":                   { word: "Тиждень",           phon: "TYZH-den" },
+  "Month":                  { word: "Місяць",            phon: "MEE-syahts" },
+  "Year":                   { word: "Рік",               phon: "REEK" },
+
+  // ACTIONS
+  "Eat":                    { word: "Їсти",              phon: "YEES-ty" },
+  "Drink":                  { word: "Пити",              phon: "PY-ty" },
+  "Sleep":                  { word: "Спати",             phon: "SPAH-ty" },
+  "Run":                    { word: "Бігати",            phon: "BEE-hah-ty" },
+  "Walk":                   { word: "Ходити",            phon: "khoh-DY-ty" },
+  "Read":                   { word: "Читати",            phon: "chy-TAH-ty" },
+  "Write":                  { word: "Писати",            phon: "py-SAH-ty" },
+  "Sing":                   { word: "Співати",           phon: "spee-VAH-ty" },
+
+  // WEATHER
+  "Sunny":                  { word: "Сонячно",           phon: "SOH-nyahch-noh" },
+  "Rainy":                  { word: "Дощовий",           phon: "dosh-CHOH-vyy" },
+  "Cloudy":                 { word: "Хмарно",            phon: "KHMAR-noh" },
+  "Snowy":                  { word: "Сніжний",           phon: "SNEEZH-nyy" },
+  "Windy":                  { word: "Вітряно",           phon: "VEET-ryah-noh" },
+
+  // TRANSPORT
+  "Car":                    { word: "Машина",            phon: "mah-SHY-nah" },
+  "Bus":                    { word: "Автобус",           phon: "av-TOH-boos" },
+  "Train":                  { word: "Поїзд",             phon: "POH-yeezd" },
+  "Plane":                  { word: "Літак",             phon: "lee-TAHK" },
+  "Bike":                   { word: "Велосипед",         phon: "veh-loh-sy-PED" },
+  "Boat":                   { word: "Човен",             phon: "CHOH-ven" },
+
+  // EXPANSION SET — FOOD
+  "Orange (fruit)":         { word: "Апельсин",          phon: "ah-pel-SYN" },
+  "Strawberry":             { word: "Полуниця",          phon: "poh-loo-NY-tsya" },
+  "Grape":                  { word: "Виноград",          phon: "vy-noh-HRAHD" },
+  "Watermelon":             { word: "Кавун",             phon: "kah-VOON" },
+  "Carrot":                 { word: "Морква",            phon: "MORK-vah" },
+  "Potato":                 { word: "Картопля",          phon: "kar-TOP-lya" },
+  "Breakfast":              { word: "Сніданок",          phon: "snee-DAH-nok" },
+  "Lunch":                  { word: "Обід",              phon: "oh-BEED" },
+  "Dinner":                 { word: "Вечеря",            phon: "veh-CHEH-rya" },
+  "Juice":                  { word: "Сік",               phon: "SEEK" },
+  "Ice cream":              { word: "Морозиво",          phon: "moh-ROH-zy-voh" },
+  "Cookie":                 { word: "Печиво",            phon: "PEH-chy-voh" },
+  "Cheese":                 { word: "Сир",               phon: "SYR" },
+  "Butter":                 { word: "Масло",             phon: "MAHS-loh" },
+  "Salt":                   { word: "Сіль",              phon: "SEEL" },
+
+  // EXPANSION SET — DAILY
+  "Shirt":                  { word: "Сорочка",           phon: "soh-ROHCH-kah" },
+  "Pants":                  { word: "Штани",             phon: "shtah-NY" },
+  "Shoes":                  { word: "Взуття",            phon: "vzoot-TYAH" },
+  "Socks":                  { word: "Шкарпетки",         phon: "shkar-PET-ky" },
+  "Hat":                    { word: "Шапка",             phon: "SHAHP-kah" },
+  "Coat":                   { word: "Пальто",            phon: "pahl-TOH" },
+  "Pajamas":                { word: "Піжама",            phon: "pee-ZHAH-mah" },
+  "Brush teeth":            { word: "Чистити зуби",      phon: "CHYS-ty-ty ZOO-by" },
+  "Wash hands":             { word: "Мити руки",         phon: "MY-ty ROO-ky" },
+  "Take a bath":            { word: "Купатися",          phon: "koo-PAH-ty-sya" },
+  "Bed":                    { word: "Ліжко",             phon: "LEEZH-koh" },
+  "Pillow":                 { word: "Подушка",           phon: "poh-DOOSH-kah" },
+  "Soap":                   { word: "Мило",              phon: "MY-loh" },
+  "Towel":                  { word: "Рушник",            phon: "roosh-NYK" },
+  "Toothbrush":             { word: "Зубна щітка",       phon: "zoob-NAH SHCHEET-kah" },
+
+  // EXPANSION SET — PLACES
+  "Home":                   { word: "Дім",               phon: "DEEM" },
+  "Park":                   { word: "Парк",              phon: "PARK" },
+  "Store":                  { word: "Магазин",           phon: "mah-hah-ZYN" },
+  "Library":                { word: "Бібліотека",        phon: "bee-blee-oh-TEH-kah" },
+  "Hospital":               { word: "Лікарня",           phon: "lee-KAR-nya" },
+  "Playground":             { word: "Майданчик",         phon: "mai-DAHN-chyk" },
+
+  // EXPANSION SET — ACTIONS
+  "Play":                   { word: "Грати",             phon: "HRAH-ty" },
+  "Jump":                   { word: "Стрибати",          phon: "stry-BAH-ty" },
+  "Draw":                   { word: "Малювати",          phon: "mah-lyoo-VAH-ty" },
+  "Sit":                    { word: "Сидіти",            phon: "sy-DEE-ty" },
+  "Stand":                  { word: "Стояти",            phon: "stoh-YAH-ty" },
+  "Help":                   { word: "Допомагати",        phon: "doh-poh-mah-HAH-ty" },
+
+  // EXPANSION SET — TIME (days)
+  "Monday":                 { word: "Понеділок",         phon: "poh-neh-DEE-lok" },
+  "Tuesday":                { word: "Вівторок",          phon: "veev-TOH-rok" },
+  "Wednesday":              { word: "Середа",            phon: "seh-reh-DAH" },
+  "Thursday":               { word: "Четвер",            phon: "chet-VEHR" },
+  "Friday":                 { word: "П'ятниця",          phon: "PYAHT-ny-tsya" },
+  "Saturday":               { word: "Субота",            phon: "soo-BOH-tah" },
+  "Sunday":                 { word: "Неділя",            phon: "neh-DEE-lya" },
+
+  // EXPANSION SET — COLORS
+  "Purple":                 { word: "Фіолетовий",        phon: "fee-oh-LEH-toh-vyy" },
+  "Orange (color)":         { word: "Помаранчевий",      phon: "poh-mah-RAHN-cheh-vyy" },
+  "Pink":                   { word: "Рожевий",           phon: "roh-ZHEH-vyy" },
+  "White":                  { word: "Білий",             phon: "BEE-lyy" },
+  "Black":                  { word: "Чорний",            phon: "CHOR-nyy" },
+  "Brown":                  { word: "Коричневий",        phon: "koh-RYCH-neh-vyy" },
+
+  // EXPANSION SET — PHRASES
+  "You're welcome":         { word: "Будь ласка",        phon: "bood LAHS-kah" },
+  "How old are you?":       { word: "Скільки тобі років?", phon: "SKEEL-ky toh-BEE ROH-keev" },
+  "Can I have...":          { word: "Можна мені...?",    phon: "MOZH-nah meh-NEE" },
+  "I'm sorry":              { word: "Вибач",             phon: "VY-bahch" },
+  "More please":            { word: "Ще, будь ласка",    phon: "shcheh bood LAHS-kah" },
+};
+
+// Merge Ukrainian translations into flashcards
+for (const card of flashcards) {
+  const u = UKRAINIAN_TRANSLATIONS[card.english];
+  if (u) {
+    card.ukrainian = u.word;
+    card.romanization.ukrainian = u.phon;
+  }
+}
+
+/**
+ * Italian translations keyed by `english`. Standard Italian + kid-readable
+ * Latin-script phonetic. No per-character breakdown — Latin alphabet.
+ */
+const ITALIAN_TRANSLATIONS: Record<string, { word: string; phon: string }> = {
+  // GREETINGS
+  "Hello":                  { word: "Ciao",                  phon: "CHOW" },
+  "Thank you":              { word: "Grazie",                phon: "GRAH-tsyeh" },
+  "Good morning":           { word: "Buongiorno",            phon: "bwon-JOR-noh" },
+  "Good night":             { word: "Buonanotte",            phon: "bwoh-nah-NOT-teh" },
+  "Goodbye":                { word: "Arrivederci",           phon: "ah-ree-veh-DEHR-chee" },
+  "Please":                 { word: "Per favore",            phon: "pehr fah-VOH-reh" },
+  "Excuse me / Sorry":      { word: "Scusa",                 phon: "SKOO-zah" },
+  "Yes":                    { word: "Sì",                    phon: "SEE" },
+  "No":                     { word: "No",                    phon: "NOH" },
+
+  // FAMILY
+  "Mother / Mom":           { word: "Mamma",                 phon: "MAHM-mah" },
+  "Father / Dad":           { word: "Papà",                  phon: "pah-PAH" },
+  "Sister":                 { word: "Sorella",               phon: "soh-REL-lah" },
+  "Brother":                { word: "Fratello",              phon: "frah-TEL-loh" },
+  "Grandmother":            { word: "Nonna",                 phon: "NOHN-nah" },
+  "Grandfather":            { word: "Nonno",                 phon: "NOHN-noh" },
+  "Love":                   { word: "Amore",                 phon: "ah-MOH-reh" },
+  "I love you":             { word: "Ti amo",                phon: "tee AH-moh" },
+
+  // FEELINGS
+  "Happy":                  { word: "Felice",                phon: "feh-LEE-cheh" },
+  "Sad":                    { word: "Triste",                phon: "TREES-teh" },
+  "Hungry":                 { word: "Ho fame",               phon: "oh FAH-meh" },
+  "Tired":                  { word: "Stanco",                phon: "STAHN-koh" },
+  "Big":                    { word: "Grande",                phon: "GRAHN-deh" },
+  "Small":                  { word: "Piccolo",               phon: "PEEK-koh-loh" },
+  "Beautiful":              { word: "Bello",                 phon: "BEL-loh" },
+  "Angry":                  { word: "Arrabbiato",            phon: "ahr-rahb-BYAH-toh" },
+  "Scared":                 { word: "Spaventato",            phon: "spah-ven-TAH-toh" },
+  "Hot":                    { word: "Caldo",                 phon: "KAHL-doh" },
+  "Cold":                   { word: "Freddo",                phon: "FRED-doh" },
+  "Fast":                   { word: "Veloce",                phon: "veh-LOH-cheh" },
+  "Slow":                   { word: "Lento",                 phon: "LEN-toh" },
+  "New":                    { word: "Nuovo",                 phon: "NWOH-voh" },
+  "Old":                    { word: "Vecchio",               phon: "VEK-kyoh" },
+
+  // FOOD
+  "Water":                  { word: "Acqua",                 phon: "AHK-kwah" },
+  "Rice":                   { word: "Riso",                  phon: "REE-zoh" },
+  "Milk":                   { word: "Latte",                 phon: "LAHT-teh" },
+  "Fruit":                  { word: "Frutta",                phon: "FROOT-tah" },
+  "Delicious":              { word: "Delizioso",             phon: "deh-lee-TSYOH-zoh" },
+  "Bread":                  { word: "Pane",                  phon: "PAH-neh" },
+  "Egg":                    { word: "Uovo",                  phon: "WOH-voh" },
+  "Apple":                  { word: "Mela",                  phon: "MEH-lah" },
+  "Banana":                 { word: "Banana",                phon: "bah-NAH-nah" },
+  "Noodles":                { word: "Pasta",                 phon: "PAHS-tah" },
+  "Soup":                   { word: "Zuppa",                 phon: "TSOOP-pah" },
+  "Tea":                    { word: "Tè",                    phon: "TEH" },
+  "Cake":                   { word: "Torta",                 phon: "TOR-tah" },
+
+  // ANIMALS
+  "Cat":                    { word: "Gatto",                 phon: "GAHT-toh" },
+  "Dog":                    { word: "Cane",                  phon: "KAH-neh" },
+  "Fish":                   { word: "Pesce",                 phon: "PEH-sheh" },
+  "Bird":                   { word: "Uccello",               phon: "ootch-CHEL-loh" },
+  "Horse":                  { word: "Cavallo",               phon: "kah-VAHL-loh" },
+  "Cow":                    { word: "Mucca",                 phon: "MOOK-kah" },
+  "Pig":                    { word: "Maiale",                phon: "mah-YAH-leh" },
+  "Rabbit":                 { word: "Coniglio",              phon: "koh-NEE-lyoh" },
+  "Mouse":                  { word: "Topo",                  phon: "TOH-poh" },
+  "Elephant":               { word: "Elefante",              phon: "eh-leh-FAHN-teh" },
+  "Lion":                   { word: "Leone",                 phon: "leh-OH-neh" },
+  "Tiger":                  { word: "Tigre",                 phon: "TEE-greh" },
+
+  // SCHOOL
+  "School":                 { word: "Scuola",                phon: "SKWOH-lah" },
+  "Book":                   { word: "Libro",                 phon: "LEE-broh" },
+  "Teacher":                { word: "Maestro",               phon: "mah-ES-troh" },
+  "Friend":                 { word: "Amico",                 phon: "ah-MEE-koh" },
+
+  // NUMBERS
+  "One":                    { word: "Uno",                   phon: "OO-noh" },
+  "Two":                    { word: "Due",                   phon: "DOO-eh" },
+  "Three":                  { word: "Tre",                   phon: "TREH" },
+  "Four":                   { word: "Quattro",               phon: "KWAHT-troh" },
+  "Five":                   { word: "Cinque",                phon: "CHEEN-kweh" },
+  "Six":                    { word: "Sei",                   phon: "SAY" },
+  "Seven":                  { word: "Sette",                 phon: "SET-teh" },
+  "Eight":                  { word: "Otto",                  phon: "OT-toh" },
+  "Nine":                   { word: "Nove",                  phon: "NOH-veh" },
+  "Ten":                    { word: "Dieci",                 phon: "DYEH-chee" },
+  "Eleven":                 { word: "Undici",                phon: "OON-dee-chee" },
+  "Twelve":                 { word: "Dodici",                phon: "DOH-dee-chee" },
+  "Thirteen":               { word: "Tredici",               phon: "TREH-dee-chee" },
+  "Twenty":                 { word: "Venti",                 phon: "VEN-tee" },
+  "Thirty":                 { word: "Trenta",                phon: "TREN-tah" },
+  "One person":             { word: "Una persona",           phon: "OO-nah pehr-SOH-nah" },
+  "Two people":             { word: "Due persone",           phon: "DOO-eh pehr-SOH-neh" },
+  "One thing":              { word: "Una cosa",              phon: "OO-nah KOH-zah" },
+  "Two things":             { word: "Due cose",              phon: "DOO-eh KOH-zeh" },
+
+  // COLORS
+  "Red":                    { word: "Rosso",                 phon: "ROHS-soh" },
+  "Blue":                   { word: "Blu",                   phon: "BLOO" },
+  "Yellow":                 { word: "Giallo",                phon: "JAHL-loh" },
+  "Green":                  { word: "Verde",                 phon: "VEHR-deh" },
+
+  // PHRASES
+  "Happy Birthday":         { word: "Buon compleanno",       phon: "bwon kom-pleh-AHN-noh" },
+  "How are you?":           { word: "Come stai?",            phon: "KOH-meh STAI" },
+  "My name is...":          { word: "Mi chiamo...",          phon: "mee KYAH-moh" },
+  "Nice to meet you":       { word: "Piacere",               phon: "pyah-CHEH-reh" },
+  "See you later":          { word: "A dopo",                phon: "ah DOH-poh" },
+  "Let's eat!":             { word: "Mangiamo!",             phon: "mahn-JAH-moh" },
+  "Good job!":              { word: "Bravo!",                phon: "BRAH-voh" },
+  "What is this?":          { word: "Cos'è questo?",         phon: "kohz-EH KWES-toh" },
+  "Where is the bathroom?": { word: "Dov'è il bagno?",       phon: "doh-VEH eel BAH-nyoh" },
+  "I don't understand":     { word: "Non capisco",           phon: "nohn kah-PEES-koh" },
+
+  // BODY
+  "Eyes":                   { word: "Occhi",                 phon: "OK-kee" },
+  "Ears":                   { word: "Orecchie",              phon: "oh-REK-kyeh" },
+  "Nose":                   { word: "Naso",                  phon: "NAH-zoh" },
+  "Mouth":                  { word: "Bocca",                 phon: "BOHK-kah" },
+  "Hands":                  { word: "Mani",                  phon: "MAH-nee" },
+  "Feet":                   { word: "Piedi",                 phon: "PYEH-dee" },
+  "Head":                   { word: "Testa",                 phon: "TES-tah" },
+  "Hair":                   { word: "Capelli",               phon: "kah-PEL-lee" },
+
+  // TIME
+  "Today":                  { word: "Oggi",                  phon: "OHJ-jee" },
+  "Tomorrow":               { word: "Domani",                phon: "doh-MAH-nee" },
+  "Yesterday":              { word: "Ieri",                  phon: "YEH-ree" },
+  "Morning":                { word: "Mattina",               phon: "maht-TEE-nah" },
+  "Night":                  { word: "Notte",                 phon: "NOHT-teh" },
+  "Week":                   { word: "Settimana",             phon: "set-tee-MAH-nah" },
+  "Month":                  { word: "Mese",                  phon: "MEH-zeh" },
+  "Year":                   { word: "Anno",                  phon: "AHN-noh" },
+
+  // ACTIONS
+  "Eat":                    { word: "Mangiare",              phon: "mahn-JAH-reh" },
+  "Drink":                  { word: "Bere",                  phon: "BEH-reh" },
+  "Sleep":                  { word: "Dormire",               phon: "dor-MEE-reh" },
+  "Run":                    { word: "Correre",               phon: "KOR-reh-reh" },
+  "Walk":                   { word: "Camminare",             phon: "kahm-mee-NAH-reh" },
+  "Read":                   { word: "Leggere",               phon: "LEDJ-jeh-reh" },
+  "Write":                  { word: "Scrivere",              phon: "SKREE-veh-reh" },
+  "Sing":                   { word: "Cantare",               phon: "kahn-TAH-reh" },
+
+  // WEATHER
+  "Sunny":                  { word: "Soleggiato",            phon: "soh-led-JAH-toh" },
+  "Rainy":                  { word: "Piovoso",               phon: "pyoh-VOH-zoh" },
+  "Cloudy":                 { word: "Nuvoloso",              phon: "noo-voh-LOH-zoh" },
+  "Snowy":                  { word: "Nevoso",                phon: "neh-VOH-zoh" },
+  "Windy":                  { word: "Ventoso",               phon: "ven-TOH-zoh" },
+
+  // TRANSPORT
+  "Car":                    { word: "Macchina",              phon: "MAHK-kee-nah" },
+  "Bus":                    { word: "Autobus",               phon: "OW-toh-boos" },
+  "Train":                  { word: "Treno",                 phon: "TREH-noh" },
+  "Plane":                  { word: "Aereo",                 phon: "ah-EH-reh-oh" },
+  "Bike":                   { word: "Bicicletta",            phon: "bee-chee-KLET-tah" },
+  "Boat":                   { word: "Barca",                 phon: "BAR-kah" },
+
+  // EXPANSION SET — FOOD
+  "Orange (fruit)":         { word: "Arancia",               phon: "ah-RAHN-chah" },
+  "Strawberry":             { word: "Fragola",               phon: "FRAH-goh-lah" },
+  "Grape":                  { word: "Uva",                   phon: "OO-vah" },
+  "Watermelon":             { word: "Anguria",               phon: "ahn-GOO-ryah" },
+  "Carrot":                 { word: "Carota",                phon: "kah-ROH-tah" },
+  "Potato":                 { word: "Patata",                phon: "pah-TAH-tah" },
+  "Breakfast":              { word: "Colazione",             phon: "koh-lah-TSYOH-neh" },
+  "Lunch":                  { word: "Pranzo",                phon: "PRAHN-tsoh" },
+  "Dinner":                 { word: "Cena",                  phon: "CHEH-nah" },
+  "Juice":                  { word: "Succo",                 phon: "SOOK-koh" },
+  "Ice cream":              { word: "Gelato",                phon: "jeh-LAH-toh" },
+  "Cookie":                 { word: "Biscotto",              phon: "bees-KOT-toh" },
+  "Cheese":                 { word: "Formaggio",             phon: "for-MAHJ-joh" },
+  "Butter":                 { word: "Burro",                 phon: "BOOR-roh" },
+  "Salt":                   { word: "Sale",                  phon: "SAH-leh" },
+
+  // EXPANSION SET — DAILY
+  "Shirt":                  { word: "Camicia",               phon: "kah-MEE-chah" },
+  "Pants":                  { word: "Pantaloni",             phon: "pahn-tah-LOH-nee" },
+  "Shoes":                  { word: "Scarpe",                phon: "SKAR-peh" },
+  "Socks":                  { word: "Calzini",               phon: "kahl-TSEE-nee" },
+  "Hat":                    { word: "Cappello",              phon: "kahp-PEL-loh" },
+  "Coat":                   { word: "Cappotto",              phon: "kahp-POT-toh" },
+  "Pajamas":                { word: "Pigiama",               phon: "pee-JAH-mah" },
+  "Brush teeth":            { word: "Lavare i denti",        phon: "lah-VAH-reh ee DEN-tee" },
+  "Wash hands":             { word: "Lavare le mani",        phon: "lah-VAH-reh leh MAH-nee" },
+  "Take a bath":            { word: "Fare il bagno",         phon: "FAH-reh eel BAH-nyoh" },
+  "Bed":                    { word: "Letto",                 phon: "LET-toh" },
+  "Pillow":                 { word: "Cuscino",               phon: "koo-SHEE-noh" },
+  "Soap":                   { word: "Sapone",                phon: "sah-POH-neh" },
+  "Towel":                  { word: "Asciugamano",           phon: "ah-shoo-gah-MAH-noh" },
+  "Toothbrush":             { word: "Spazzolino",            phon: "spaht-tsoh-LEE-noh" },
+
+  // EXPANSION SET — PLACES
+  "Home":                   { word: "Casa",                  phon: "KAH-zah" },
+  "Park":                   { word: "Parco",                 phon: "PAR-koh" },
+  "Store":                  { word: "Negozio",               phon: "neh-GOH-tsyoh" },
+  "Library":                { word: "Biblioteca",            phon: "bee-blee-oh-TEH-kah" },
+  "Hospital":               { word: "Ospedale",              phon: "os-peh-DAH-leh" },
+  "Playground":             { word: "Parco giochi",          phon: "PAR-koh JOH-kee" },
+
+  // EXPANSION SET — ACTIONS
+  "Play":                   { word: "Giocare",               phon: "joh-KAH-reh" },
+  "Jump":                   { word: "Saltare",               phon: "sahl-TAH-reh" },
+  "Draw":                   { word: "Disegnare",             phon: "dee-zen-YAH-reh" },
+  "Sit":                    { word: "Sedersi",               phon: "seh-DEHR-see" },
+  "Stand":                  { word: "Stare in piedi",        phon: "STAH-reh een PYEH-dee" },
+  "Help":                   { word: "Aiutare",               phon: "ah-yoo-TAH-reh" },
+
+  // EXPANSION SET — TIME (days)
+  "Monday":                 { word: "Lunedì",                phon: "loo-neh-DEE" },
+  "Tuesday":                { word: "Martedì",               phon: "mar-teh-DEE" },
+  "Wednesday":              { word: "Mercoledì",             phon: "mehr-koh-leh-DEE" },
+  "Thursday":               { word: "Giovedì",               phon: "joh-veh-DEE" },
+  "Friday":                 { word: "Venerdì",               phon: "veh-nehr-DEE" },
+  "Saturday":               { word: "Sabato",                phon: "SAH-bah-toh" },
+  "Sunday":                 { word: "Domenica",              phon: "doh-MEH-nee-kah" },
+
+  // EXPANSION SET — COLORS
+  "Purple":                 { word: "Viola",                 phon: "VYOH-lah" },
+  "Orange (color)":         { word: "Arancione",             phon: "ah-rahn-CHOH-neh" },
+  "Pink":                   { word: "Rosa",                  phon: "ROH-zah" },
+  "White":                  { word: "Bianco",                phon: "BYAHN-koh" },
+  "Black":                  { word: "Nero",                  phon: "NEH-roh" },
+  "Brown":                  { word: "Marrone",               phon: "mahr-ROH-neh" },
+
+  // EXPANSION SET — PHRASES
+  "You're welcome":         { word: "Prego",                 phon: "PREH-goh" },
+  "How old are you?":       { word: "Quanti anni hai?",      phon: "KWAHN-tee AHN-nee AI" },
+  "Can I have...":          { word: "Posso avere...?",       phon: "POHS-soh ah-VEH-reh" },
+  "I'm sorry":              { word: "Mi dispiace",           phon: "mee dees-PYAH-cheh" },
+  "More please":            { word: "Ancora, per favore",    phon: "ahn-KOH-rah pehr fah-VOH-reh" },
+};
+
+for (const card of flashcards) {
+  const it = ITALIAN_TRANSLATIONS[card.english];
+  if (it) {
+    card.italian = it.word;
+    card.romanization.italian = it.phon;
+  }
+}
+
+/**
+ * Hindi translations keyed by `english`. Devanagari script + kid-readable
+ * Latin phonetic. No per-character breakdown — Devanagari is alphasyllabic
+ * and the Latin phonetic effectively *is* the breakdown.
+ */
+const HINDI_TRANSLATIONS: Record<string, { word: string; phon: string }> = {
+  // GREETINGS
+  "Hello":                  { word: "नमस्ते",            phon: "nuh-mas-TAY" },
+  "Thank you":              { word: "धन्यवाद",           phon: "DHAN-yuh-vahd" },
+  "Good morning":           { word: "सुप्रभात",          phon: "soo-pruh-BHAHT" },
+  "Good night":             { word: "शुभ रात्रि",        phon: "SHOOBH RAH-tree" },
+  "Goodbye":                { word: "अलविदा",            phon: "ahl-vee-DAH" },
+  "Please":                 { word: "कृपया",             phon: "KRIP-yah" },
+  "Excuse me / Sorry":      { word: "माफ़ कीजिए",        phon: "MAHF KEE-jee-yeh" },
+  "Yes":                    { word: "हाँ",               phon: "HAAN" },
+  "No":                     { word: "नहीं",              phon: "nuh-HEEN" },
+
+  // FAMILY
+  "Mother / Mom":           { word: "माँ",               phon: "MAA" },
+  "Father / Dad":           { word: "पिता",              phon: "pee-TAH" },
+  "Sister":                 { word: "बहन",               phon: "BUH-hen" },
+  "Brother":                { word: "भाई",               phon: "BHAI" },
+  "Grandmother":            { word: "दादी",              phon: "DAH-dee" },
+  "Grandfather":            { word: "दादा",              phon: "DAH-dah" },
+  "Love":                   { word: "प्यार",             phon: "PYAR" },
+  "I love you":             { word: "मैं तुमसे प्यार करता हूँ", phon: "main TOOM-seh PYAR KUR-tah HOON" },
+
+  // FEELINGS
+  "Happy":                  { word: "खुश",               phon: "KHOOSH" },
+  "Sad":                    { word: "उदास",              phon: "oo-DAHS" },
+  "Hungry":                 { word: "भूखा",              phon: "BHOO-khah" },
+  "Tired":                  { word: "थका हुआ",           phon: "thuh-KAH hoo-AH" },
+  "Big":                    { word: "बड़ा",              phon: "BUH-rah" },
+  "Small":                  { word: "छोटा",              phon: "CHOH-tah" },
+  "Beautiful":              { word: "सुंदर",             phon: "SOON-dur" },
+  "Angry":                  { word: "ग़ुस्सा",           phon: "GOOS-sah" },
+  "Scared":                 { word: "डरा हुआ",           phon: "duh-RAH hoo-AH" },
+  "Hot":                    { word: "गरम",               phon: "guh-RUHM" },
+  "Cold":                   { word: "ठंडा",              phon: "TUHN-dah" },
+  "Fast":                   { word: "तेज़",              phon: "TAYZ" },
+  "Slow":                   { word: "धीमा",              phon: "DHEE-mah" },
+  "New":                    { word: "नया",               phon: "nuh-YAH" },
+  "Old":                    { word: "पुराना",            phon: "poo-RAH-nah" },
+
+  // FOOD
+  "Water":                  { word: "पानी",              phon: "PAH-nee" },
+  "Rice":                   { word: "चावल",              phon: "CHAH-vul" },
+  "Milk":                   { word: "दूध",               phon: "DOODH" },
+  "Fruit":                  { word: "फल",                phon: "FUHL" },
+  "Delicious":              { word: "स्वादिष्ट",         phon: "SVAH-dishth" },
+  "Bread":                  { word: "रोटी",              phon: "ROH-tee" },
+  "Egg":                    { word: "अंडा",              phon: "UHN-dah" },
+  "Apple":                  { word: "सेब",               phon: "SAYB" },
+  "Banana":                 { word: "केला",              phon: "KAY-lah" },
+  "Noodles":                { word: "नूडल्स",            phon: "NOO-duls" },
+  "Soup":                   { word: "सूप",               phon: "SOOP" },
+  "Tea":                    { word: "चाय",               phon: "CHAI" },
+  "Cake":                   { word: "केक",               phon: "KAYK" },
+
+  // ANIMALS
+  "Cat":                    { word: "बिल्ली",            phon: "BIL-lee" },
+  "Dog":                    { word: "कुत्ता",            phon: "KOOT-tah" },
+  "Fish":                   { word: "मछली",              phon: "MUCH-lee" },
+  "Bird":                   { word: "चिड़िया",           phon: "CHID-yah" },
+  "Horse":                  { word: "घोड़ा",             phon: "GHOH-rah" },
+  "Cow":                    { word: "गाय",               phon: "GAI" },
+  "Pig":                    { word: "सुअर",              phon: "SOO-ur" },
+  "Rabbit":                 { word: "खरगोश",             phon: "KHAR-gohsh" },
+  "Mouse":                  { word: "चूहा",              phon: "CHOO-hah" },
+  "Elephant":               { word: "हाथी",              phon: "HAH-thee" },
+  "Lion":                   { word: "शेर",               phon: "SHAYR" },
+  "Tiger":                  { word: "बाघ",               phon: "BAAGH" },
+
+  // SCHOOL
+  "School":                 { word: "स्कूल",             phon: "SKOOL" },
+  "Book":                   { word: "किताब",             phon: "kee-TAAB" },
+  "Teacher":                { word: "शिक्षक",            phon: "SHIK-shuk" },
+  "Friend":                 { word: "दोस्त",             phon: "DOHST" },
+
+  // NUMBERS
+  "One":                    { word: "एक",                phon: "AYK" },
+  "Two":                    { word: "दो",                phon: "DOH" },
+  "Three":                  { word: "तीन",               phon: "TEEN" },
+  "Four":                   { word: "चार",               phon: "CHAR" },
+  "Five":                   { word: "पाँच",              phon: "PAANCH" },
+  "Six":                    { word: "छह",                phon: "CHHEH" },
+  "Seven":                  { word: "सात",               phon: "SAAT" },
+  "Eight":                  { word: "आठ",                phon: "AATH" },
+  "Nine":                   { word: "नौ",                phon: "NOW" },
+  "Ten":                    { word: "दस",                phon: "DUS" },
+  "Eleven":                 { word: "ग्यारह",            phon: "GYAH-ruh" },
+  "Twelve":                 { word: "बारह",              phon: "BAH-ruh" },
+  "Thirteen":               { word: "तेरह",              phon: "TEH-ruh" },
+  "Twenty":                 { word: "बीस",               phon: "BEES" },
+  "Thirty":                 { word: "तीस",               phon: "TEES" },
+  "One person":             { word: "एक व्यक्ति",        phon: "AYK VYUK-tee" },
+  "Two people":             { word: "दो लोग",            phon: "DOH LOHG" },
+  "One thing":              { word: "एक चीज़",           phon: "AYK CHEEZ" },
+  "Two things":             { word: "दो चीज़ें",         phon: "DOH CHEE-zen" },
+
+  // COLORS
+  "Red":                    { word: "लाल",               phon: "LAHL" },
+  "Blue":                   { word: "नीला",              phon: "NEE-lah" },
+  "Yellow":                 { word: "पीला",              phon: "PEE-lah" },
+  "Green":                  { word: "हरा",               phon: "huh-RAH" },
+
+  // PHRASES
+  "Happy Birthday":         { word: "जन्मदिन मुबारक",    phon: "JUN-um-din moo-BAH-ruk" },
+  "How are you?":           { word: "आप कैसे हैं?",      phon: "AHP KAY-say HAIN" },
+  "My name is...":          { word: "मेरा नाम...है",     phon: "MEH-rah NAAM... hai" },
+  "Nice to meet you":       { word: "आपसे मिलकर खुशी हुई", phon: "AHP-say mil-KUR khoo-SHEE hoo-EE" },
+  "See you later":          { word: "फिर मिलेंगे",       phon: "fir mi-LEN-gay" },
+  "Let's eat!":             { word: "चलो खाते हैं!",     phon: "CHUH-loh KHAH-tay HAIN" },
+  "Good job!":              { word: "शाबाश!",            phon: "shah-BAHSH" },
+  "What is this?":          { word: "यह क्या है?",       phon: "YEH KYAH HAI" },
+  "Where is the bathroom?": { word: "बाथरूम कहाँ है?",   phon: "BAATH-room kuh-HAAN HAI" },
+  "I don't understand":     { word: "मुझे समझ नहीं आया", phon: "MOO-jhay SUH-muj nuh-HEEN ah-YAH" },
+
+  // BODY
+  "Eyes":                   { word: "आँखें",             phon: "AAN-khen" },
+  "Ears":                   { word: "कान",               phon: "KAAN" },
+  "Nose":                   { word: "नाक",               phon: "NAAK" },
+  "Mouth":                  { word: "मुँह",              phon: "MOONH" },
+  "Hands":                  { word: "हाथ",               phon: "HAATH" },
+  "Feet":                   { word: "पैर",               phon: "PAIR" },
+  "Head":                   { word: "सिर",               phon: "SIR" },
+  "Hair":                   { word: "बाल",               phon: "BAAL" },
+
+  // TIME
+  "Today":                  { word: "आज",                phon: "AAJ" },
+  "Tomorrow":               { word: "कल",                phon: "KUHL" },
+  "Yesterday":              { word: "कल",                phon: "KUHL" },
+  "Morning":                { word: "सुबह",              phon: "SOO-buh" },
+  "Night":                  { word: "रात",               phon: "RAAT" },
+  "Week":                   { word: "हफ़्ता",            phon: "HUF-tah" },
+  "Month":                  { word: "महीना",             phon: "muh-HEE-nah" },
+  "Year":                   { word: "साल",               phon: "SAAL" },
+
+  // ACTIONS
+  "Eat":                    { word: "खाना",              phon: "KHAH-nah" },
+  "Drink":                  { word: "पीना",              phon: "PEE-nah" },
+  "Sleep":                  { word: "सोना",              phon: "SOH-nah" },
+  "Run":                    { word: "दौड़ना",            phon: "DOR-nah" },
+  "Walk":                   { word: "चलना",              phon: "CHUL-nah" },
+  "Read":                   { word: "पढ़ना",             phon: "PURH-nah" },
+  "Write":                  { word: "लिखना",             phon: "LIKH-nah" },
+  "Sing":                   { word: "गाना",              phon: "GAH-nah" },
+
+  // WEATHER
+  "Sunny":                  { word: "धूप",               phon: "DHOOP" },
+  "Rainy":                  { word: "बरसाती",            phon: "bur-SAH-tee" },
+  "Cloudy":                 { word: "बादल",              phon: "BAH-dul" },
+  "Snowy":                  { word: "बर्फीला",           phon: "bur-FEE-lah" },
+  "Windy":                  { word: "हवादार",            phon: "huh-vah-DAHR" },
+
+  // TRANSPORT
+  "Car":                    { word: "कार",               phon: "KAR" },
+  "Bus":                    { word: "बस",                phon: "BUS" },
+  "Train":                  { word: "रेल",               phon: "RAYL" },
+  "Plane":                  { word: "हवाई जहाज़",        phon: "huh-VAI juh-HAAZ" },
+  "Bike":                   { word: "साइकिल",            phon: "SAI-kil" },
+  "Boat":                   { word: "नाव",               phon: "NAAV" },
+
+  // EXPANSION SET — FOOD
+  "Orange (fruit)":         { word: "संतरा",             phon: "SUN-tuh-rah" },
+  "Strawberry":             { word: "स्ट्रॉबेरी",        phon: "STRAW-beh-ree" },
+  "Grape":                  { word: "अंगूर",             phon: "un-GOOR" },
+  "Watermelon":             { word: "तरबूज़",            phon: "tur-BOOZ" },
+  "Carrot":                 { word: "गाजर",              phon: "GAH-jur" },
+  "Potato":                 { word: "आलू",               phon: "AH-loo" },
+  "Breakfast":              { word: "नाश्ता",            phon: "NAHSH-tah" },
+  "Lunch":                  { word: "दोपहर का खाना",     phon: "doh-PUH-her kah KHAH-nah" },
+  "Dinner":                 { word: "रात का खाना",       phon: "RAAT kah KHAH-nah" },
+  "Juice":                  { word: "रस",                phon: "RUS" },
+  "Ice cream":              { word: "आइसक्रीम",          phon: "ICE-kreem" },
+  "Cookie":                 { word: "बिस्किट",           phon: "BIS-kit" },
+  "Cheese":                 { word: "पनीर",              phon: "puh-NEER" },
+  "Butter":                 { word: "मक्खन",             phon: "MUKH-khun" },
+  "Salt":                   { word: "नमक",               phon: "NUH-muk" },
+
+  // EXPANSION SET — DAILY
+  "Shirt":                  { word: "कमीज़",             phon: "kuh-MEEZ" },
+  "Pants":                  { word: "पतलून",             phon: "put-LOON" },
+  "Shoes":                  { word: "जूते",              phon: "JOO-tay" },
+  "Socks":                  { word: "मोज़े",             phon: "MOH-zay" },
+  "Hat":                    { word: "टोपी",              phon: "TOH-pee" },
+  "Coat":                   { word: "कोट",               phon: "KOHT" },
+  "Pajamas":                { word: "पजामा",             phon: "puh-JAH-mah" },
+  "Brush teeth":            { word: "दाँत साफ़ करना",    phon: "DAANT SAAF KUR-nah" },
+  "Wash hands":             { word: "हाथ धोना",          phon: "HAATH DHOH-nah" },
+  "Take a bath":            { word: "नहाना",             phon: "nuh-HAH-nah" },
+  "Bed":                    { word: "बिस्तर",            phon: "BIS-tur" },
+  "Pillow":                 { word: "तकिया",             phon: "tuh-KEE-yah" },
+  "Soap":                   { word: "साबुन",             phon: "SAH-boon" },
+  "Towel":                  { word: "तौलिया",            phon: "TOW-lee-yah" },
+  "Toothbrush":             { word: "टूथब्रश",           phon: "TOOTH-brush" },
+
+  // EXPANSION SET — PLACES
+  "Home":                   { word: "घर",                phon: "GHUR" },
+  "Park":                   { word: "पार्क",             phon: "PARK" },
+  "Store":                  { word: "दुकान",             phon: "doo-KAAN" },
+  "Library":                { word: "पुस्तकालय",         phon: "POOS-tuh-kah-luy" },
+  "Hospital":               { word: "अस्पताल",           phon: "us-puh-TAAL" },
+  "Playground":             { word: "खेल का मैदान",      phon: "KHAYL kah MAI-daan" },
+
+  // EXPANSION SET — ACTIONS
+  "Play":                   { word: "खेलना",             phon: "KHAYL-nah" },
+  "Jump":                   { word: "कूदना",             phon: "KOOD-nah" },
+  "Draw":                   { word: "चित्र बनाना",       phon: "CHITR buh-NAH-nah" },
+  "Sit":                    { word: "बैठना",             phon: "BAITH-nah" },
+  "Stand":                  { word: "खड़ा होना",         phon: "khuh-RAH HOH-nah" },
+  "Help":                   { word: "मदद करना",          phon: "muh-DUD KUR-nah" },
+
+  // EXPANSION SET — TIME (days)
+  "Monday":                 { word: "सोमवार",            phon: "SOHM-vahr" },
+  "Tuesday":                { word: "मंगलवार",           phon: "MUN-gul-vahr" },
+  "Wednesday":              { word: "बुधवार",            phon: "BOODH-vahr" },
+  "Thursday":               { word: "गुरुवार",           phon: "GOO-roo-vahr" },
+  "Friday":                 { word: "शुक्रवार",          phon: "SHOOK-ruh-vahr" },
+  "Saturday":               { word: "शनिवार",            phon: "SHUH-nee-vahr" },
+  "Sunday":                 { word: "रविवार",            phon: "RUH-vee-vahr" },
+
+  // EXPANSION SET — COLORS
+  "Purple":                 { word: "बैंगनी",            phon: "BAIN-guh-nee" },
+  "Orange (color)":         { word: "नारंगी",            phon: "nah-RUN-gee" },
+  "Pink":                   { word: "गुलाबी",            phon: "goo-LAH-bee" },
+  "White":                  { word: "सफ़ेद",             phon: "suh-FAYD" },
+  "Black":                  { word: "काला",              phon: "KAH-lah" },
+  "Brown":                  { word: "भूरा",              phon: "BHOO-rah" },
+
+  // EXPANSION SET — PHRASES
+  "You're welcome":         { word: "आपका स्वागत है",    phon: "AHP-kah SVAH-gut HAI" },
+  "How old are you?":       { word: "आपकी उम्र क्या है?", phon: "AHP-kee OOMR KYAH HAI" },
+  "Can I have...":          { word: "क्या मुझे...मिल सकता है?", phon: "KYAH MOO-jhay... MIL SUK-tah HAI" },
+  "I'm sorry":              { word: "मुझे माफ़ करें",    phon: "MOO-jhay MAHF kuh-REN" },
+  "More please":            { word: "और कृपया",          phon: "AUR KRIP-yah" },
+};
+
+for (const card of flashcards) {
+  const hi = HINDI_TRANSLATIONS[card.english];
+  if (hi) {
+    card.hindi = hi.word;
+    card.romanization.hindi = hi.phon;
+  }
+}
+
+export const categories = ['all', 'Greetings', 'Family', 'Feelings', 'Food', 'Animals', 'School', 'Numbers', 'Colors', 'Phrases', 'Body', 'Time', 'Actions', 'Weather', 'Transport', 'Daily', 'Places'];
 
 export const CATEGORY_EMOJI: Record<string, string> = {
   all: '📚',
@@ -544,4 +1439,6 @@ export const CATEGORY_EMOJI: Record<string, string> = {
   Actions: '🏃',
   Weather: '☀️',
   Transport: '🚗',
+  Daily: '🧼',
+  Places: '🏞️',
 };

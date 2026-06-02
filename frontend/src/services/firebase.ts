@@ -25,7 +25,8 @@ export function ensureSignedIn() {
 
 export type SynthesizeLang =
   | "japanese" | "korean" | "mandarin"
-  | "spanish" | "french" | "german";
+  | "spanish" | "french" | "german" | "ukrainian"
+  | "italian" | "hindi";
 
 export const synthesizeSpeech = httpsCallable<
   { text: string; lang: SynthesizeLang },

@@ -7,7 +7,8 @@ setGlobalOptions({ maxInstances: 10 });
 
 type Lang =
   | "japanese" | "korean" | "mandarin"
-  | "spanish" | "french" | "german";
+  | "spanish" | "french" | "german" | "ukrainian"
+  | "italian" | "hindi";
 
 const VOICE_BY_LANG: Record<Lang, { languageCode: string; name: string }> = {
   japanese: { languageCode: "ja-JP", name: "ja-JP-Neural2-B" },
@@ -16,6 +17,11 @@ const VOICE_BY_LANG: Record<Lang, { languageCode: string; name: string }> = {
   spanish: { languageCode: "es-ES", name: "es-ES-Neural2-A" },
   french: { languageCode: "fr-FR", name: "fr-FR-Neural2-A" },
   german: { languageCode: "de-DE", name: "de-DE-Neural2-A" },
+  // Google has no Neural2/Studio voices for Ukrainian yet — Standard is the
+  // best baseline available.
+  ukrainian: { languageCode: "uk-UA", name: "uk-UA-Standard-A" },
+  italian: { languageCode: "it-IT", name: "it-IT-Neural2-A" },
+  hindi: { languageCode: "hi-IN", name: "hi-IN-Neural2-A" },
 };
 
 const ttsClient = new TextToSpeechClient();
@@ -30,6 +36,9 @@ const STT_LANG_CODE: Record<Lang, string> = {
   spanish: "es-ES",
   french: "fr-FR",
   german: "de-DE",
+  ukrainian: "uk-UA",
+  italian: "it-IT",
+  hindi: "hi-IN",
 };
 
 // Map frontend-reported MIME types to Google STT encoding enums. Browsers

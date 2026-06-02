@@ -6,7 +6,7 @@ import { ProfileMascot } from './ProfileMascot';
 import { LANG_THEME } from '../models/langTheme';
 
 /** Visual order of language tiles. Labels + colors come from LANG_THEME. */
-const LANG_ORDER: Lang[] = ['japanese', 'korean', 'mandarin', 'spanish', 'french', 'german'];
+const LANG_ORDER: Lang[] = ['japanese', 'korean', 'mandarin', 'spanish', 'french', 'german', 'ukrainian', 'italian', 'hindi'];
 
 type Step = 'list' | 'name' | 'avatar' | 'language';
 
