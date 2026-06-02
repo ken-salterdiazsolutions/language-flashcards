@@ -58,6 +58,39 @@ export function useProfile() {
     });
   }, [persist, store]);
 
+  const renameActive = useCallback((name: string) => {
+    const trimmed = name.trim().slice(0, 16);
+    if (!trimmed) return;
+    updateActive(p => ({ ...p, name: trimmed }));
+  }, [updateActive]);
+
+  const setAvatar = useCallback((avatar: Avatar) => {
+    updateActive(p => ({ ...p, avatar }));
+  }, [updateActive]);
+
+  /**
+   * Mark a level as passed for the active profile's language. Idempotent:
+   * passing a level twice doesn't duplicate it. Advances `level` to the
+   * next unpassed level when the just-passed level was the current one.
+   */
+  const passLevel = useCallback((lang: Lang, level: number) => {
+    updateActive(p => {
+      const ensured = ensureLangProgress(p, lang);
+      const lp = ensured.progress[lang]!;
+      if (lp.passedLevels.includes(level)) return ensured;
+      const passedLevels = [...lp.passedLevels, level].sort((a, b) => a - b);
+      // Bump current level if we just passed it.
+      const nextLevel = lp.level === level ? level + 1 : lp.level;
+      return {
+        ...ensured,
+        progress: {
+          ...ensured.progress,
+          [lang]: { ...lp, passedLevels, level: nextLevel, currentLevelAttempts: 0 },
+        },
+      };
+    });
+  }, [updateActive]);
+
   return {
     profiles: store.profiles,
     activeProfile,
@@ -65,5 +98,8 @@ export function useProfile() {
     selectProfile,
     setCurrentLanguage,
     deleteProfile,
+    renameActive,
+    setAvatar,
+    passLevel,
   };
 }

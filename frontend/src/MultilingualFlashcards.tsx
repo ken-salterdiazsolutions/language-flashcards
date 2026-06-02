@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ensureSignedIn, synthesizeSpeech } from './services/firebase';
 import { flashcards, categories, CATEGORY_EMOJI, type Lang } from './models/data';
@@ -15,15 +15,27 @@ import streakFireUrl from './assets/streak-fire.json?url';
 
 type Props = {
   activeProfile: import('./models/profile').Profile;
-  onSwitchProfile: () => void;
-  onChangeLanguage: (lang: Lang) => void;
+  onOpenSettings: () => void;
+  /** Optional Home-screen escape hatch — when set, a "Home" pill renders
+   *  in the header. Free Play passes this; level mode uses its own banner. */
+  onHome?: () => void;
+  /**
+   * When set, scope the deck to these cards and hide the category strip.
+   * Used by Practice (level) mode. Free Play passes undefined to keep the
+   * full-deck browse behavior.
+   */
+  levelMode?: {
+    cards: import('./models/data').Flashcard[];
+    levelNumber: number;
+    onBack: () => void;
+    onPassLevel: () => void;
+  };
 };
 
-const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLanguage }: Props) => {
+const MultilingualFlashcards = ({ activeProfile, onOpenSettings, onHome, levelMode }: Props) => {
   const [currentCard, setCurrentCard] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const selectedLanguage = activeProfile.currentLanguage;
-  const setSelectedLanguage = onChangeLanguage;
   const [showBreakdown, setShowBreakdown] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -33,34 +45,9 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const { streak, recordVisit } = useStreak();
 
-  // Language strip scroll state — mirrors CategoryStrip's behavior so the
-  // language picker can show prev/next chevron arrows on desktop.
-  const langScrollerRef = useRef<HTMLDivElement>(null);
-  const [langCanScrollLeft, setLangCanScrollLeft] = useState(false);
-  const [langCanScrollRight, setLangCanScrollRight] = useState(false);
-  useEffect(() => {
-    const el = langScrollerRef.current;
-    if (!el) return;
-    const update = () => {
-      setLangCanScrollLeft(el.scrollLeft > 4);
-      setLangCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
-    };
-    update();
-    el.addEventListener('scroll', update, { passive: true });
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener('scroll', update);
-      ro.disconnect();
-    };
-  }, []);
-  const scrollLangBy = (delta: number) => {
-    langScrollerRef.current?.scrollBy({ left: delta, behavior: 'smooth' });
-  };
-
-  // Match the card flip animation duration. If the user changes language or
-  // category while the card is flipped to the back, flip it back to the
-  // English side first so they don't get a sneak peek at the new answer.
+  // Match the card flip animation duration. If the user changes category
+  // while the card is flipped to the back, flip it back to the English side
+  // first so they don't get a sneak peek at the new answer.
   const FLIP_DURATION_MS = 700;
   const afterFlipBack = (fn: () => void) => {
     if (showAnswer) {
@@ -71,7 +58,9 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
     }
   };
 
-  const filtered = selectedCategory === 'all' ? flashcards : flashcards.filter(c => c.cat === selectedCategory);
+  const filtered = levelMode
+    ? levelMode.cards
+    : selectedCategory === 'all' ? flashcards : flashcards.filter(c => c.cat === selectedCategory);
   const card = filtered[currentCard] || filtered[0];
   const theme = LANG_THEME[selectedLanguage];
 
@@ -158,9 +147,9 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
         {/* Header */}
         <header className="flex items-center justify-between mb-6 sm:mb-8">
           <button
-            onClick={onSwitchProfile}
+            onClick={onOpenSettings}
             className="flex items-center gap-2 bg-white/60 hover:bg-white rounded-full pl-1 pr-3 py-1 shadow-sm active:scale-95 transition-transform"
-            aria-label={`Switch from profile ${activeProfile.name}`}
+            aria-label={`${activeProfile.name} — open settings`}
           >
             <span className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-violet-100 flex items-center justify-center text-2xl sm:text-3xl">
               {activeProfile.avatar}
@@ -170,6 +159,15 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
             </span>
           </button>
           <div className="flex items-center gap-2">
+            {onHome && (
+              <button
+                onClick={onHome}
+                className="flex items-center gap-1 bg-white/70 hover:bg-white rounded-full px-3 py-1.5 text-sm sm:text-base font-extrabold text-slate-700 shadow-sm active:scale-95 transition-transform"
+                aria-label="Back to home"
+              >
+                🏠 <span className="hidden sm:inline">Home</span>
+              </button>
+            )}
             <button
               onClick={() => setStreakModalOpen(true)}
               className="flex items-center gap-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold rounded-full px-3 py-1.5 text-sm sm:text-base shadow-sm active:scale-95 transition-transform"
@@ -190,59 +188,39 @@ const MultilingualFlashcards = ({ activeProfile, onSwitchProfile, onChangeLangua
           </div>
         </header>
 
-        {/* Language picker — scrollable strip */}
-        <div className="relative mb-4 sm:mb-6 px-4 md:px-12">
-          {langCanScrollLeft && (
+        {/* Level mode banner — replaces language + category strips */}
+        {levelMode && (
+          <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3 bg-white/70 rounded-2xl px-4 py-3 shadow-sm">
             <button
-              onClick={() => scrollLangBy(-200)}
-              aria-label="Scroll languages left"
-              className="hidden md:[@media(hover:hover)]:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
+              onClick={levelMode.onBack}
+              className="rounded-xl px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-sm active:scale-95 transition-transform"
             >
-              <ChevronLeft className="w-5 h-5" />
+              ← Levels
             </button>
-          )}
-          {langCanScrollRight && (
+            <div className="text-center">
+              <div className="text-xs sm:text-sm text-slate-500 font-semibold uppercase tracking-wide">Practicing</div>
+              <div className="text-base sm:text-lg font-extrabold text-slate-800">
+                Level {levelMode.levelNumber} · {filtered.length} cards
+              </div>
+            </div>
             <button
-              onClick={() => scrollLangBy(200)}
-              aria-label="Scroll languages right"
-              className="hidden md:[@media(hover:hover)]:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 items-center justify-center rounded-full bg-violet-500/50 backdrop-blur-md shadow-lg ring-1 ring-white/40 text-white hover:bg-violet-500/70"
+              onClick={levelMode.onPassLevel}
+              className="rounded-xl px-3 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-[0_4px_0_0_rgb(6_95_70)] active:translate-y-0.5 active:shadow-none transition-all"
+              title="Mark this level as passed"
             >
-              <ChevronRight className="w-5 h-5" />
+              ✓ Pass
             </button>
-          )}
-          <div
-            ref={langScrollerRef}
-            className="flex gap-2 overflow-x-auto scroll-smooth py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            <div className="shrink-0 w-4" aria-hidden="true" />
-            {(Object.keys(LANG_THEME) as Lang[]).map((lang) => {
-              const t = LANG_THEME[lang];
-              const active = selectedLanguage === lang;
-              return (
-                <button
-                  key={lang}
-                  onClick={() => afterFlipBack(() => setSelectedLanguage(lang))}
-                  className={`shrink-0 rounded-2xl px-4 py-3 font-bold transition-all min-w-[100px] sm:min-w-[120px] ${
-                    active
-                      ? `bg-white text-slate-800 ${t.glow}`
-                      : 'bg-white/60 text-slate-500 hover:bg-white/80'
-                  }`}
-                >
-                  <div className="text-sm sm:text-base">{t.label}</div>
-                  <div className={`text-base sm:text-lg ${active ? t.chipText : ''}`}>{t.short}</div>
-                </button>
-              );
-            })}
-            <div className="shrink-0 w-4" aria-hidden="true" />
           </div>
-        </div>
+        )}
 
-        {/* Category strip — horizontal scroll with auto-centered active pill */}
-        <CategoryStrip
-          categories={categories}
-          selected={selectedCategory}
-          onSelect={(cat) => afterFlipBack(() => { setSelectedCategory(cat); setCurrentCard(0); })}
-        />
+        {/* Category strip — hidden in level mode */}
+        {!levelMode && (
+          <CategoryStrip
+            categories={categories}
+            selected={selectedCategory}
+            onSelect={(cat) => afterFlipBack(() => { setSelectedCategory(cat); setCurrentCard(0); })}
+          />
+        )}
 
         {/* The card — full 3D flip */}
         <div className="relative mb-6" style={{ perspective: '1600px' }}>
