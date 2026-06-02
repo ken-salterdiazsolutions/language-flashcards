@@ -1,7 +1,10 @@
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import type { Profile } from '../models/profile';
 import { LANG_THEME } from '../models/langTheme';
 import { LEVELS } from '../models/levels';
 import { ProfileMascot } from './ProfileMascot';
+import bullseyeUrl from '../assets/bullseye.json?url';
+import cardsUrl from '../assets/cards.json?url';
 
 type Props = {
   activeProfile: Profile;
@@ -79,7 +82,9 @@ export function Home({
             onClick={onPracticeLevels}
             className="rounded-3xl p-5 sm:p-6 bg-violet-500 hover:bg-violet-600 text-white text-left shadow-[0_8px_0_0_rgb(91_33_182)] active:translate-y-1 active:shadow-none transition-all"
           >
-            <div className="text-4xl sm:text-5xl mb-2">🎯</div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mb-2 -ml-1">
+              <DotLottieReact src={bullseyeUrl} loop autoplay />
+            </div>
             <div className="text-xl sm:text-2xl font-extrabold">Practice Levels</div>
             <div className="text-sm sm:text-base text-white/85 mt-1">
               Step-by-step lessons.
@@ -93,7 +98,9 @@ export function Home({
             onClick={onFreePlay}
             className="rounded-3xl p-5 sm:p-6 bg-amber-400 hover:bg-amber-500 text-amber-950 text-left shadow-[0_8px_0_0_rgb(146_64_14)] active:translate-y-1 active:shadow-none transition-all"
           >
-            <div className="text-4xl sm:text-5xl mb-2">🎲</div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mb-2 -ml-1">
+              <DotLottieReact src={cardsUrl} loop autoplay />
+            </div>
             <div className="text-xl sm:text-2xl font-extrabold">Free Play</div>
             <div className="text-sm sm:text-base text-amber-900/85 mt-1">
               Browse all the cards.
