@@ -4,6 +4,7 @@ import { ProfilePicker } from './components/ProfilePicker';
 import { Home } from './components/Home';
 import { LevelPicker } from './components/LevelPicker';
 import { ProfileSettings } from './components/ProfileSettings';
+import { QuizSession } from './components/QuizSession';
 import { useProfile } from './hooks/useProfile';
 import { getLevelCards, MAX_LEVEL } from './models/levels';
 
@@ -94,18 +95,23 @@ function App() {
 
   if (route.kind === 'practice') {
     const cards = getLevelCards(route.level);
+    const lang = activeProfile.currentLanguage;
+    const mastered = activeProfile.progress[lang]?.cardsMastered ?? [];
     return (
-      <MultilingualFlashcards
-        activeProfile={activeProfile}
-        onOpenSettings={goSettings}
-        levelMode={{
-          cards,
-          levelNumber: route.level,
-          onBack: () => setRoute({ kind: 'levels' }),
-          onPassLevel: () => {
-            profile.passLevel(activeProfile.currentLanguage, route.level);
-            setRoute({ kind: 'levels' });
-          },
+      <QuizSession
+        cards={cards}
+        levelNumber={route.level}
+        lang={lang}
+        mastered={mastered}
+        onMarkCorrect={(english) => profile.markCardCorrect(lang, english)}
+        onPassLevel={() => {
+          profile.passLevel(lang, route.level);
+          setRoute({ kind: 'levels' });
+        }}
+        onBack={() => setRoute({ kind: 'levels' })}
+        onManualPass={() => {
+          profile.passLevel(lang, route.level);
+          setRoute({ kind: 'levels' });
         }}
       />
     );

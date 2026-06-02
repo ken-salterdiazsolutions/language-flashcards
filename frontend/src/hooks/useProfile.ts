@@ -69,6 +69,25 @@ export function useProfile() {
   }, [updateActive]);
 
   /**
+   * Mark a card as mastered for the active profile + language. Idempotent.
+   * "Mastered" = answered correctly at least once in quiz mode.
+   */
+  const markCardCorrect = useCallback((lang: Lang, english: string) => {
+    updateActive(p => {
+      const ensured = ensureLangProgress(p, lang);
+      const lp = ensured.progress[lang]!;
+      if (lp.cardsMastered.includes(english)) return ensured;
+      return {
+        ...ensured,
+        progress: {
+          ...ensured.progress,
+          [lang]: { ...lp, cardsMastered: [...lp.cardsMastered, english] },
+        },
+      };
+    });
+  }, [updateActive]);
+
+  /**
    * Mark a level as passed for the active profile's language. Idempotent:
    * passing a level twice doesn't duplicate it. Advances `level` to the
    * next unpassed level when the just-passed level was the current one.
@@ -101,5 +120,6 @@ export function useProfile() {
     renameActive,
     setAvatar,
     passLevel,
+    markCardCorrect,
   };
 }
