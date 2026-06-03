@@ -18,12 +18,17 @@ The repo is split into two npm packages — there is no root `package.json`. Alw
 npm --prefix frontend run dev      # Vite dev server (frontend at :5173)
 npm --prefix frontend run build    # tsc -b && vite build → frontend/dist
 npm --prefix frontend run lint     # eslint
+npm --prefix frontend run test     # vitest run (unit tests for models/*)
 npm --prefix functions run build   # tsc → functions/lib
 npm --prefix functions run deploy  # firebase deploy --only functions
 firebase deploy --only hosting     # build runs via predeploy hook in firebase.json
 ```
 
-There is no test runner configured. Firebase project ID is `language-flashcards-b282d`.
+Both packages use **Vitest** for unit tests (`npm --prefix <dir> run test`, or `test:watch`).
+Frontend tests cover the pure-logic modules under `src/models/` (scoring, level/quiz selection,
+profile store, deck integrity) and run in the Node environment — `vitest.setup.ts` provides an
+in-memory `localStorage` shim instead of jsdom, since no component/DOM tests exist yet. CI runs both
+suites on push/PR (`.github/workflows/ci.yml`). Firebase project ID is `language-flashcards-b282d`.
 Pushing to `main` auto-deploys hosting via GitHub Actions (`.github/workflows/`).
 
 ## Architecture

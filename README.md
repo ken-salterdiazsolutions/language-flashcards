@@ -73,6 +73,7 @@ npm --prefix functions run serve   # builds, then starts the functions emulator
 npm --prefix frontend run dev      # Vite dev server (http://localhost:5173)
 npm --prefix frontend run build    # tsc -b && vite build → frontend/dist
 npm --prefix frontend run lint     # eslint
+npm --prefix frontend run test     # vitest (unit tests for src/models/*)
 
 npm --prefix functions run build   # tsc → functions/lib
 npm --prefix functions run test    # vitest
