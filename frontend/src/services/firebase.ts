@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
+import type { Lang } from "../models/data";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC_fhwdcbTQ-rLiYw6fEkBxcqJvu6Db2q8",
@@ -23,17 +24,12 @@ export function ensureSignedIn() {
   return signInPromise;
 }
 
-export type SynthesizeLang =
-  | "japanese" | "korean" | "mandarin"
-  | "spanish" | "french" | "german" | "ukrainian"
-  | "italian" | "hindi";
-
 export const synthesizeSpeech = httpsCallable<
-  { text: string; lang: SynthesizeLang },
+  { text: string; lang: Lang },
   { audioBase64: string; mimeType: string }
 >(functions, "synthesizeSpeech");
 
 export const transcribeSpeech = httpsCallable<
-  { audioBase64: string; mimeType: string; lang: SynthesizeLang },
+  { audioBase64: string; mimeType: string; lang: Lang },
   { transcript: string; confidence: number }
 >(functions, "transcribeSpeech");
