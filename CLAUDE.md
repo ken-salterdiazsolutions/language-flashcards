@@ -88,3 +88,12 @@ Reused by the picker and quiz. Tailwind v4 via `@tailwindcss/vite` (no `tailwind
 - Two-space indent, TypeScript throughout, React 19 function components + hooks. No class components.
 - Cards are always referenced by their `english` string, never by array index across persisted state.
 - Lottie animations (`assets/*.json`) are imported as URLs (`?url`) and rendered with `DotLottieReact`.
+
+## Firebase reference skills
+
+`.agents/skills/` holds Firebase's official agent skills (`firebase-basics`, `firebase-auth-basics`,
+`firebase-hosting-basics`, `firebase-firestore`, etc.), pinned via `skills-lock.json` from the
+`firebase/agent-skills` repo. These follow the vendor-neutral `.agents/skills/` convention and are
+**not** auto-loaded by Claude Code (which only registers skills from `.claude/skills/`, `~/.claude/skills/`,
+and plugins) — read the relevant `SKILL.md` on demand when doing Firebase CLI, Auth, Hosting, or
+Firestore work.
