@@ -73,6 +73,19 @@ fired once via a ref guard. Mastery is stored per-language, not per-level, so th
   44.1kHz Opus. The `transcribeSpeech` callable also accepts webm/ogg/mp4 via `pickEncoding`.
 - **Auth**: both functions require auth. The frontend signs in **anonymously** on demand via
   `ensureSignedIn()` (`services/firebase.ts`) — call it before any callable.
+- **App Check**: both callables also enforce **Firebase App Check** (reCAPTCHA v3) via
+  `enforceAppCheck: true` in `functions/src/index.ts` — a request without a valid App Check token is
+  rejected even if authed. The frontend initializes App Check in `services/firebase.ts`; the reCAPTCHA
+  site key there is public by design (it ships in the bundle, like the Firebase API key). The Firebase
+  Web API key is likewise meant to be public — it's a project identifier, not a secret (a GitHub
+  secret-scanning alert flagging it was dismissed as a false positive).
+  - **Local dev gotcha**: enforcement rejects requests without a token, so `npm run dev` would fail —
+    except dev builds set `FIREBASE_APPCHECK_DEBUG_TOKEN` (gated by `import.meta.env.DEV`). On first run
+    the browser console prints a debug token; register it under Firebase console → **App Check → Apps →
+    your web app → ⋮ → Manage debug tokens**. The token is **per browser/machine** (a new browser,
+    incognito window, or computer prints a fresh one to register). Debug tokens never affect prod.
+  - To roll back enforcement: remove `enforceAppCheck: true` from both callables and
+    `npm --prefix functions run deploy`.
 - **Note**: TTS↔STT BCP-47 codes differ for Mandarin (TTS `cmn-CN`, STT `zh-CN`). Both maps live in
   `functions/src/index.ts`. The `Lang` union is defined once on the frontend (`models/data.ts`) and
   re-declared in `functions/src/index.ts` — the two packages deploy independently and can't share a
