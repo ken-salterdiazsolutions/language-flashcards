@@ -88,6 +88,8 @@ Reused by the picker and quiz. Tailwind v4 via `@tailwindcss/vite` (no `tailwind
 - Two-space indent, TypeScript throughout, React 19 function components + hooks. No class components.
 - Cards are always referenced by their `english` string, never by array index across persisted state.
 - Lottie animations (`assets/*.json`) are imported as URLs (`?url`) and rendered with `DotLottieReact`.
+- Keep the root `README.md` up to date — when a change affects setup, commands, the tech stack,
+  features, or the architecture summary, update `README.md` in the same change.
 
 ## Firebase reference skills
 
