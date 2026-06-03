@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import type { Lang } from "../models/data";
@@ -14,6 +15,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// App Check (reCAPTCHA v3) attests requests come from the real app, so the
+// Cloud Functions can reject traffic that isn't from this site. The site key
+// is public by design (it ships in the client bundle, like the API key above).
+// In dev, enable a debug token so localhost works without reCAPTCHA — the token
+// prints to the console on first run; register it under App Check → Apps →
+// Manage debug tokens.
+if (import.meta.env.DEV) {
+  (self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN =
+    true;
+}
+
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LeR_AotAAAAAP_J6uE4OPfOyNym2Cns8esVaLa0"),
+  isTokenAutoRefreshEnabled: true,
+});
+
 const auth = getAuth(app);
 const functions = getFunctions(app, "us-central1");
 
