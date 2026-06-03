@@ -123,7 +123,7 @@ export function QuizSession({
     if (phase.kind !== 'prompt') return;
     if (!targetWord) return;
     setPhase({ kind: 'recording' });
-    recorder.start(async ({ blob, mimeType: _mt }) => {
+    recorder.start(async ({ blob }) => {
       setPhase({ kind: 'judging' });
       try {
         const { blob: wav } = await resampleToWav48k(blob);

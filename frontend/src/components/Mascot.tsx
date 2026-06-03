@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import type { DotLottie } from '@lottiefiles/dotlottie-web';
 
@@ -52,7 +52,6 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   // Start walking immediately on mount so the mascot walks in from the left.
   const [mood, setMood] = useState<Mood>('walk');
   const moodRef = useRef<Mood>('walk');
-  moodRef.current = mood;
 
   // Horizontal position, in pixels from the left edge of the parent.
   // Starts off-screen to the left so the entry walk reads as "walking in."
@@ -66,7 +65,6 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   // requests during the pause are silently dropped per design choice).
   const [offstage, setOffstage] = useState(false);
   const offstageRef = useRef(false);
-  offstageRef.current = offstage;
   const pauseTimerRef = useRef<number | null>(null);
   const remainingWalkMsRef = useRef<number | null>(null);
 
@@ -74,6 +72,25 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
   const prevFlipRef = useRef(flipCount);
   const prevNavRef = useRef(navCount);
   const prevCategoryRef = useRef(categoryKey);
+
+  // Mirror the latest state into refs so the rAF loop, timers, and event
+  // handlers can read current values without being effect dependencies.
+  // Declared before the mood-driving effects below so they run first within a
+  // commit, keeping requestMood's reads up to date (as the render-time
+  // assignment used to).
+  useEffect(() => {
+    moodRef.current = mood;
+  }, [mood]);
+  useEffect(() => {
+    offstageRef.current = offstage;
+  }, [offstage]);
+
+  // The wrapper's `left` is driven imperatively by the rAF loop; seed the
+  // initial offstage-left position before first paint instead of reading
+  // xRef during render.
+  useLayoutEffect(() => {
+    if (wrapperRef.current) wrapperRef.current.style.left = `${xRef.current}px`;
+  }, []);
 
   const requestMood = (next: Mood) => {
     if (offstageRef.current) return;
@@ -220,7 +237,7 @@ export function Mascot({ flipCount, navCount, categoryKey, isPlaying, streak }: 
         ref={wrapperRef}
         onClick={() => requestMood('wave')}
         className={`absolute top-0 w-32 h-32 sm:w-40 sm:h-40 pointer-events-auto cursor-pointer active:scale-95 transition-transform ${isPlaying ? 'animate-mascot-talk' : ''}`}
-        style={{ left: `${xRef.current}px`, visibility: offstage ? 'hidden' : 'visible' }}
+        style={{ visibility: offstage ? 'hidden' : 'visible' }}
         role="button"
         aria-label="Wave at the mascot"
       >
