@@ -43,7 +43,7 @@ const STT_LANG_CODE: Record<Lang, string> = {
 };
 
 export const synthesizeSpeech = onCall(
-  { region: "us-central1" },
+  { region: "us-central1", enforceAppCheck: true },
   async (request) => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign-in required.");
@@ -80,7 +80,7 @@ export const synthesizeSpeech = onCall(
 const MAX_AUDIO_BYTES = 1_000_000; // ~1MB; well above what a ~10s clip needs
 
 export const transcribeSpeech = onCall(
-  { region: "us-central1" },
+  { region: "us-central1", enforceAppCheck: true },
   async (request) => {
     if (!request.auth) {
       throw new HttpsError("unauthenticated", "Sign-in required.");
