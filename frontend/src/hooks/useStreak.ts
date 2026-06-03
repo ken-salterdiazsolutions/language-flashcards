@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const LAST_VISIT_KEY = 'lf.lastVisit';
 const STREAK_KEY = 'lf.streak';
@@ -16,6 +16,14 @@ function yesterdayISO() {
 
 export function useStreak() {
   const [streak, setStreak] = useState<number>(() => {
+    // If the last visit was before yesterday the streak is broken — reset it
+    // here (once, at init) rather than in an effect that would cascade a render.
+    const last = localStorage.getItem(LAST_VISIT_KEY);
+    const today = todayISO();
+    if (last && last !== today && last !== yesterdayISO()) {
+      localStorage.removeItem(STREAK_KEY);
+      return 0;
+    }
     const s = Number(localStorage.getItem(STREAK_KEY));
     return Number.isFinite(s) && s > 0 ? s : 0;
   });
@@ -29,15 +37,6 @@ export function useStreak() {
     localStorage.setItem(STREAK_KEY, String(next));
     setStreak(next);
   };
-
-  useEffect(() => {
-    const last = localStorage.getItem(LAST_VISIT_KEY);
-    const today = todayISO();
-    if (last && last !== today && last !== yesterdayISO()) {
-      localStorage.removeItem(STREAK_KEY);
-      setStreak(0);
-    }
-  }, []);
 
   return { streak, recordVisit };
 }

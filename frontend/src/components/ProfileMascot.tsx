@@ -31,9 +31,14 @@ type Props = {
 export function ProfileMascot({ celebrateKey }: Props) {
   const [mood, setMood] = useState<Mood>('wave');
   const moodRef = useRef<Mood>('wave');
-  moodRef.current = mood;
   const dotLottieRef = useRef<DotLottie | null>(null);
   const prevKeyRef = useRef<number>(celebrateKey);
+
+  // Mirror mood into a ref so the Lottie complete handler can read the
+  // current value without re-subscribing.
+  useEffect(() => {
+    moodRef.current = mood;
+  }, [mood]);
 
   // Whenever celebrateKey changes (parent signaling a transition), fire
   // a celebrate. Ignore the initial render's value.
